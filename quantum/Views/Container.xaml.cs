@@ -85,9 +85,12 @@ namespace quantum.Views
                             UIElement element = DownloadList.Children[downloadIndex];
                             if (element is CardExpander)
                             {
+                                TextBlock textBlock = new TextBlock();
+                                textBlock.Text = downloadTask.taskInfo.Completed + "/" + downloadTask.taskInfo.Size + " " + downloadTask.taskInfo.Speed + " " + downloadTask.taskInfo.TimeLeft;
+                                ((CardExpander)element).ToolTip = textBlock;
                                 if (((CardExpander)element).Content is ProgressBar)
                                 {
-                                    Application.Current.Dispatcher.Invoke(() => ((ProgressBar)((CardExpander)element).Content).Value = downloadTask.taskInfo.Percentage);
+                                    ((ProgressBar)((CardExpander)element).Content).Value = downloadTask.taskInfo.Percentage;
                                 }
                             }
                         }
@@ -253,13 +256,12 @@ namespace quantum.Views
 
         public void refreshList()
         {
-            TotalCount.Text = "Total " + DownloadList.Children.Count + (DownloadList.Children.Count <= 1 ? " Tasks" : " Task");
+            TotalCount.Text = "Total " + DownloadList.Children.Count + (DownloadList.Children.Count <= 1 ? " Task" : " Tasks");
         }
 
         public void addList(String fileName)
         {
             ProgressBar progressBar = new ProgressBar();
-            progressBar.Value = new Random().NextDouble() * 100;
 
             CardExpander cardExpander = new CardExpander();
 
