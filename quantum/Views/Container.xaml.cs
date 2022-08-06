@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -49,13 +50,8 @@ namespace quantum.Views
                             QuantumDownload quantumDownload = new QuantumDownload();
                             quantumDownload.taskInfo = taskInfo;
                             quantumDownload.taskInfo.TaskFile = fileSystemInfo.FullName;
-                            IFormatter formatter = new BinaryFormatter();
-                            Stream serializedStream = new FileStream(quantumDownload.taskInfo.TaskFile + ".qdl",
-                                FileMode.OpenOrCreate);
-                            DownloadPackage package = formatter.Deserialize(serializedStream) as DownloadPackage;
                             quantumDownload.Init();
-                            quantumDownload.Resume(package);
-                            serializedStream.Close();
+                            resumeTask(quantumDownload);
                             quantumDownload.isDownloading = true;
                             downloadTasks.Add(quantumDownload);
                             addList(taskInfo.Url);
@@ -212,6 +208,7 @@ namespace quantum.Views
                     if (taskInfo.Percentage >= 100)
                     {
                         File.Delete(taskInfo.TaskFile);
+                        Process.Start("explorer.exe", taskInfo.Dir);
                     }
                 }
                 catch
@@ -354,6 +351,16 @@ namespace quantum.Views
             }
         }
 
+        public void resumeTask(QuantumDownload downloadTask)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            Stream serializedStream =
+                new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
+            DownloadPackage package = formatter.Deserialize(serializedStream) as DownloadPackage;
+            downloadTask.Resume(package);
+            serializedStream.Close();
+        }
+
         public void saveAllTasks()
         {
             foreach (QuantumDownload downloadTask in downloadTasks)
@@ -362,10 +369,54 @@ namespace quantum.Views
             }
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        public void resumeAllTasks()
+        {
+            foreach (QuantumDownload downloadTask in downloadTasks)
+            {
+                resumeTask(downloadTask);
+            }
+        }
+
+        private void Add_Click(object sender, RoutedEventArgs e)
         {
             AddTaskLink.Text = "";
             AddTaskDialog.Show();
+        }
+
+        private void PauseAll_Click(object sender, RoutedEventArgs e)
+        {
+            saveAllTasks();
+            foreach (var download in DownloadList.Children)
+            {
+                if (download is CardExpander)
+                {
+                    if (((CardExpander)download).Header is Grid)
+                    {
+                        if (((Grid)((CardExpander)download).Header).Children[1] is Wpf.Ui.Controls.Button)
+                        {
+                            ((Wpf.Ui.Controls.Button)((Grid)((CardExpander)download).Header).Children[1]).Content = "Resume";
+                        }
+                    }
+                }
+            }
+        }
+
+        private void StartAll_Click(object sender, RoutedEventArgs e)
+        {
+            resumeAllTasks();
+            foreach (var download in DownloadList.Children)
+            {
+                if (download is CardExpander)
+                {
+                    if (((CardExpander)download).Header is Grid)
+                    {
+                        if (((Grid)((CardExpander)download).Header).Children[1] is Wpf.Ui.Controls.Button)
+                        {
+                            ((Wpf.Ui.Controls.Button)((Grid)((CardExpander)download).Header).Children[1]).Content = "Pause";
+                        }
+                    }
+                }
+            }
         }
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
@@ -388,12 +439,7 @@ namespace quantum.Views
             }
             else
             {
-                IFormatter formatter = new BinaryFormatter();
-                Stream serializedStream =
-                    new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
-                DownloadPackage package = formatter.Deserialize(serializedStream) as DownloadPackage;
-                downloadTask.Resume(package);
-                serializedStream.Close();
+                resumeTask(downloadTask);
                 ((Wpf.Ui.Controls.Button)sender).Content = "Pause";
             }
         }
