@@ -1,17 +1,17 @@
 ﻿<ui:UiWindow x:Class="quantum.Views.Container"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:quantum"
-        mc:Ignorable="d"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-         Background="{ui:ThemeResource ApplicationBackgroundBrush}"
-    ExtendsContentIntoTitleBar="True"
-    WindowBackdropType="Mica"
-    WindowCornerPreference="Round"
-    WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="600" MinHeight="600" Width="450" MinWidth="450" Closing="UiWindow_Closing">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:quantum"
+             mc:Ignorable="d"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             Background="{ui:ThemeResource ApplicationBackgroundBrush}"
+             ExtendsContentIntoTitleBar="True"
+             WindowBackdropType="Mica"
+             WindowCornerPreference="Round"
+             WindowStartupLocation="CenterScreen"
+             Title="MainWindow" Height="600" MinHeight="600" Width="450" MinWidth="450" Closing="UiWindow_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -20,15 +20,15 @@
         </Grid.RowDefinitions>
 
         <Grid
-        x:Name="RootMainGrid"
-        Grid.Row="1"
-        Margin="0">
+            x:Name="RootMainGrid"
+            Grid.Row="1"
+            Margin="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Border
-            Grid.Column="1">
+                Grid.Column="1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -41,7 +41,7 @@
                         <ui:MenuItem Header="Pause All" SymbolIcon="Pause24" />
                         <ui:MenuItem Header="Stop All" SymbolIcon="Stop24" />
                     </Menu>
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" >
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="DownloadList">
                         </StackPanel>
                     </ScrollViewer>
@@ -61,18 +61,18 @@
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
-           
+
             <StatusBarItem Grid.Column="0">
-                <TextBlock x:Name="TotalCount"/>
+                <TextBlock x:Name="TotalCount" />
             </StatusBarItem>
             <Separator Grid.Column="1" />
             <StatusBarItem Grid.Column="2">
-                <ProgressBar x:Name="TotalProgress"  Width="100"/>
+                <ProgressBar x:Name="TotalProgress" Width="100" />
             </StatusBarItem>
         </StatusBar>
         <ui:TitleBar
-      Title="Quantum"
-      Grid.Row="0">
+            Title="Quantum"
+            Grid.Row="0">
         </ui:TitleBar>
 
 

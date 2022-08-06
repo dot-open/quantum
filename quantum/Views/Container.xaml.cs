@@ -3,22 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
+
 namespace quantum.Views
 {
     /// <summary>
@@ -26,6 +17,9 @@ namespace quantum.Views
     /// </summary>
     public partial class Container : UiWindow
     {
+        public string appFolder =
+            Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "quantum");
+
         public Container()
         {
             InitializeComponent();
@@ -33,11 +27,12 @@ namespace quantum.Views
             AddTaskDir.Items.Add(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
             AddTaskDir.Items.Add(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
             //Wpf.Ui.Appearance.Background.Apply(this, Wpf.Ui.Appearance.BackgroundType.Mica);
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DotStudio\\Quantum\\"))
+            if (!Directory.Exists(appFolder))
             {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DotStudio\\Quantum\\");
+                Directory.CreateDirectory(appFolder);
             }
-            DirectoryInfo directoryInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DotStudio\\Quantum\\");
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(appFolder);
             FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos("*.qtask");
             foreach (FileSystemInfo fileSystemInfo in fileSystemInfos)
             {
@@ -55,7 +50,8 @@ namespace quantum.Views
                             quantumDownload.taskInfo = taskInfo;
                             quantumDownload.taskInfo.TaskFile = fileSystemInfo.FullName;
                             IFormatter formatter = new BinaryFormatter();
-                            Stream serializedStream = new FileStream(quantumDownload.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
+                            Stream serializedStream = new FileStream(quantumDownload.taskInfo.TaskFile + ".qdl",
+                                FileMode.OpenOrCreate);
                             DownloadPackage package = formatter.Deserialize(serializedStream) as DownloadPackage;
                             quantumDownload.Init();
                             quantumDownload.Resume(package);
@@ -66,13 +62,14 @@ namespace quantum.Views
                         }
                         catch
                         {
-
                         }
                     }
                 }
             }
-            new Thread(() => {
-                for (; ; )
+
+            new Thread(() =>
+            {
+                for (;;)
                 {
                     double totalProgress = 0;
 
@@ -81,16 +78,20 @@ namespace quantum.Views
                         foreach (var downloadTask in downloadTasks)
                         {
                             int downloadIndex = 0;
-                            Application.Current.Dispatcher.Invoke(() => downloadIndex = downloadTasks.IndexOf(downloadTask));
+                            Application.Current.Dispatcher.Invoke(() =>
+                                downloadIndex = downloadTasks.IndexOf(downloadTask));
                             UIElement element = DownloadList.Children[downloadIndex];
                             if (element is CardExpander)
                             {
                                 TextBlock textBlock = new TextBlock();
-                                textBlock.Text = downloadTask.taskInfo.Completed + "/" + downloadTask.taskInfo.Size + " " + downloadTask.taskInfo.Speed + " " + downloadTask.taskInfo.TimeLeft;
+                                textBlock.Text = downloadTask.taskInfo.Completed + "/" + downloadTask.taskInfo.Size +
+                                                 " " + downloadTask.taskInfo.Speed + " " +
+                                                 downloadTask.taskInfo.TimeLeft;
                                 ((CardExpander)element).ToolTip = textBlock;
                                 if (((CardExpander)element).Content is ProgressBar)
                                 {
-                                    ((ProgressBar)((CardExpander)element).Content).Value = downloadTask.taskInfo.Percentage;
+                                    ((ProgressBar)((CardExpander)element).Content).Value =
+                                        downloadTask.taskInfo.Percentage;
                                 }
                             }
                         }
@@ -134,8 +135,8 @@ namespace quantum.Views
             public string Dir { get; set; }
             public int ChunkCount { get; set; }
             public DownloadService Download { get; set; }
-
         }
+
         public static string CalcMemoryMensurableUnit(double bytes)
         {
             double kb = bytes / 1024;
@@ -170,6 +171,7 @@ namespace quantum.Views
                 taskInfo.Download.DownloadProgressChanged += OnDownloadProgressChanged;
                 taskInfo.Download.DownloadFileCompleted += OnDownloadFileCompleted;
             }
+
             public async void startDownload()
             {
                 var downloadOpt = new DownloadConfiguration()
@@ -214,7 +216,6 @@ namespace quantum.Views
                 }
                 catch
                 {
-
                 }
             }
 
@@ -256,7 +257,8 @@ namespace quantum.Views
 
         public void refreshList()
         {
-            TotalCount.Text = "Total " + DownloadList.Children.Count + (DownloadList.Children.Count <= 1 ? " Task" : " Tasks");
+            TotalCount.Text = "Total " + DownloadList.Children.Count +
+                              (DownloadList.Children.Count <= 1 ? " Task" : " Tasks");
         }
 
         public void addList(String fileName)
@@ -302,7 +304,8 @@ namespace quantum.Views
             {
                 cardExpander.Icon = Wpf.Ui.Common.SymbolRegular.WindowPlay20;
             }
-            else if(fileName.EndsWith(".txt") || fileName.EndsWith(".md") || fileName.EndsWith(".doc") || fileName.EndsWith(".docx"))
+            else if (fileName.EndsWith(".txt") || fileName.EndsWith(".md") || fileName.EndsWith(".doc") ||
+                     fileName.EndsWith(".docx"))
             {
                 cardExpander.Icon = Wpf.Ui.Common.SymbolRegular.Document20;
             }
@@ -310,11 +313,15 @@ namespace quantum.Views
             {
                 cardExpander.Icon = Wpf.Ui.Common.SymbolRegular.Window20;
             }
+            else if (fileName.EndsWith(".zip") || fileName.EndsWith(".rar"))
+            {
+                cardExpander.Icon = Wpf.Ui.Common.SymbolRegular.FolderZip20;
+            }
             else
             {
                 cardExpander.Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload20;
             }
-            
+
             DownloadList.Children.Add(cardExpander);
             refreshList();
         }
@@ -336,14 +343,14 @@ namespace quantum.Views
                 {
                     downloadTask.Stop();
                     IFormatter formatter = new BinaryFormatter();
-                    Stream serializedStream = new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
+                    Stream serializedStream =
+                        new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
                     formatter.Serialize(serializedStream, downloadTask.taskInfo.Download.Package);
                     serializedStream.Close();
                 }
             }
             catch
             {
-
             }
         }
 
@@ -363,13 +370,17 @@ namespace quantum.Views
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
-            currentDeletingIndex = DownloadList.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Parent);
+            currentDeletingIndex =
+                DownloadList.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Parent);
             ConfirmDeleteDialog.Show();
         }
 
         private void ButtonPause_Click(object sender, RoutedEventArgs e)
         {
-            QuantumDownload downloadTask = downloadTasks[DownloadList.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Parent)];
+            QuantumDownload downloadTask =
+                downloadTasks[
+                    DownloadList.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent)
+                        .Parent)];
             if (downloadTask.isDownloading)
             {
                 saveTask(downloadTask);
@@ -378,7 +389,8 @@ namespace quantum.Views
             else
             {
                 IFormatter formatter = new BinaryFormatter();
-                Stream serializedStream = new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
+                Stream serializedStream =
+                    new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
                 DownloadPackage package = formatter.Deserialize(serializedStream) as DownloadPackage;
                 downloadTask.Resume(package);
                 serializedStream.Close();
@@ -388,7 +400,7 @@ namespace quantum.Views
 
         private void AddTaskAdd(object sender, RoutedEventArgs e)
         {
-            if(AddTaskLink.Text != "")
+            if (AddTaskLink.Text != "")
             {
                 addList(AddTaskLink.Text);
                 AddTaskDialog.Hide();
@@ -399,8 +411,11 @@ namespace quantum.Views
                 QuantumDownload quantumDownload = new QuantumDownload();
                 quantumDownload.taskInfo = taskInfo;
                 quantumDownload.startDownload();
-                quantumDownload.taskInfo.TaskFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DotStudio\\Quantum\\" + Guid.NewGuid().ToString() + ".qtask";
-                File.WriteAllLines(quantumDownload.taskInfo.TaskFile, new string[] { quantumDownload.taskInfo.Url, quantumDownload.taskInfo.Dir });
+                quantumDownload.taskInfo.TaskFile =
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DotStudio\\Quantum\\" +
+                    Guid.NewGuid().ToString() + ".qtask";
+                File.WriteAllLines(quantumDownload.taskInfo.TaskFile,
+                    new string[] { quantumDownload.taskInfo.Url, quantumDownload.taskInfo.Dir });
                 downloadTasks.Add(quantumDownload);
             }
         }
