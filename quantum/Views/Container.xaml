@@ -38,8 +38,8 @@
                     <Menu Grid.Row="0">
                         <ui:MenuItem Header="Add" SymbolIcon="Add24" Click="Add_Click" />
                         <Separator />
-                        <ui:MenuItem Header="Pause All" SymbolIcon="Pause24" Click="PauseAll_Click" />
                         <ui:MenuItem Header="Start All" SymbolIcon="Play24" Click="StartAll_Click" />
+                        <ui:MenuItem Header="Pause All" SymbolIcon="Pause24" Click="PauseAll_Click" />
                     </Menu>
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="DownloadList">
@@ -89,7 +89,14 @@
             <Grid>
                 <StackPanel>
                     <TextBlock FontWeight="Medium" Text="Add a task" />
-                    <ui:TextBox x:Name="AddTaskLink" PlaceholderText="http or https link" Margin="0,14,0,0" />
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center">http://</TextBlock>
+                        <ui:TextBox Grid.Column="1" x:Name="AddTaskLink" PlaceholderText="http link" Margin="6,0,0,0" />
+                    </Grid>
                     <ComboBox x:Name="AddTaskDir" IsEditable="True" Grid.Column="1" Margin="0,14,0,0"></ComboBox>
                 </StackPanel>
             </Grid>

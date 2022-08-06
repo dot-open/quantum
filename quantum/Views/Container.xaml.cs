@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Toolkit.Uwp.Notifications;
 using Wpf.Ui.Controls;
 
 namespace quantum.Views
@@ -286,12 +287,14 @@ namespace quantum.Views
             Wpf.Ui.Controls.Button buttonPause = new Wpf.Ui.Controls.Button();
             buttonPause.Content = "Pause";
             buttonPause.Click += ButtonPause_Click;
+            buttonPause.Margin = new Thickness(5, 0, 0, 0);
             grid.Children.Add(buttonPause);
             buttonPause.SetValue(Grid.ColumnProperty, 1);
 
             Wpf.Ui.Controls.Button buttonDelete = new Wpf.Ui.Controls.Button();
             buttonDelete.Content = "Delete";
             buttonDelete.Click += ButtonDelete_Click;
+            buttonPause.Margin = new Thickness(5, 0, 0, 0);
             grid.Children.Add(buttonDelete);
             buttonDelete.SetValue(Grid.ColumnProperty, 2);
 
@@ -394,7 +397,8 @@ namespace quantum.Views
                     {
                         if (((Grid)((CardExpander)download).Header).Children[1] is Wpf.Ui.Controls.Button)
                         {
-                            ((Wpf.Ui.Controls.Button)((Grid)((CardExpander)download).Header).Children[1]).Content = "Resume";
+                            ((Wpf.Ui.Controls.Button)((Grid)((CardExpander)download).Header).Children[1]).Content =
+                                "Resume";
                         }
                     }
                 }
@@ -412,7 +416,8 @@ namespace quantum.Views
                     {
                         if (((Grid)((CardExpander)download).Header).Children[1] is Wpf.Ui.Controls.Button)
                         {
-                            ((Wpf.Ui.Controls.Button)((Grid)((CardExpander)download).Header).Children[1]).Content = "Pause";
+                            ((Wpf.Ui.Controls.Button)((Grid)((CardExpander)download).Header).Children[1]).Content =
+                                "Pause";
                         }
                     }
                 }
@@ -451,15 +456,21 @@ namespace quantum.Views
                 addList(AddTaskLink.Text);
                 AddTaskDialog.Hide();
                 TaskInfo taskInfo = new TaskInfo();
-                taskInfo.Url = AddTaskLink.Text;
+                if (AddTaskLink.Text.StartsWith("https://") || AddTaskLink.Text.StartsWith("http://"))
+                {
+                    taskInfo.Url = AddTaskLink.Text;
+                }
+                else
+                {
+                    taskInfo.Url = "http://" + AddTaskLink.Text;
+                }
+
                 taskInfo.Dir = AddTaskDir.Text;
                 taskInfo.ChunkCount = 16;
                 QuantumDownload quantumDownload = new QuantumDownload();
                 quantumDownload.taskInfo = taskInfo;
                 quantumDownload.startDownload();
-                quantumDownload.taskInfo.TaskFile =
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DotStudio\\Quantum\\" +
-                    Guid.NewGuid().ToString() + ".qtask";
+                quantumDownload.taskInfo.TaskFile = appFolder + Guid.NewGuid().ToString() + ".qtask";
                 File.WriteAllLines(quantumDownload.taskInfo.TaskFile,
                     new string[] { quantumDownload.taskInfo.Url, quantumDownload.taskInfo.Dir });
                 downloadTasks.Add(quantumDownload);
