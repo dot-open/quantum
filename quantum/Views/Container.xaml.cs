@@ -9,7 +9,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Toolkit.Uwp.Notifications;
 using Wpf.Ui.Controls;
 
 namespace quantum.Views
@@ -110,7 +109,7 @@ namespace quantum.Views
                             TotalProgress.Value = totalProgress;
                         }
                     });
-
+                    Application.Current.Dispatcher.Invoke(() => App.notifyIcon.ToolTipText = "quantum\nTotal Progress " + TotalProgress.Value.ToString() + "%");
                     Thread.Sleep(50);
                 }
             }).Start();
@@ -210,6 +209,7 @@ namespace quantum.Views
                     {
                         File.Delete(taskInfo.TaskFile);
                         Process.Start("explorer.exe", taskInfo.Dir);
+                        App.notifyIcon.ShowBalloonTip("quantum", "Download Complete!", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
                     }
                 }
                 catch
@@ -470,7 +470,7 @@ namespace quantum.Views
                 QuantumDownload quantumDownload = new QuantumDownload();
                 quantumDownload.taskInfo = taskInfo;
                 quantumDownload.startDownload();
-                quantumDownload.taskInfo.TaskFile = appFolder + Guid.NewGuid().ToString() + ".qtask";
+                quantumDownload.taskInfo.TaskFile = Path.Join(appFolder, Guid.NewGuid().ToString() + ".qtask");
                 File.WriteAllLines(quantumDownload.taskInfo.TaskFile,
                     new string[] { quantumDownload.taskInfo.Url, quantumDownload.taskInfo.Dir });
                 downloadTasks.Add(quantumDownload);
@@ -495,8 +495,16 @@ namespace quantum.Views
 
         private void UiWindow_Closing(object sender, CancelEventArgs e)
         {
-            saveAllTasks();
-            Environment.Exit(0);
+            e.Cancel = Visibility == Visibility.Visible;
+            if (!e.Cancel)
+            {
+                saveAllTasks();
+                Environment.Exit(0);
+            }
+            else
+            {
+                Visibility = Visibility.Hidden;
+            }
         }
     }
 }
