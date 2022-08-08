@@ -33,6 +33,19 @@ namespace quantum.Views
                 Directory.CreateDirectory(appFolder);
             }
 
+            if (!File.Exists(Path.Join(appFolder, "settings")))
+            {
+                File.Create(Path.Join(appFolder, "settings")).Close();
+                ToggleOpenFileFolder.IsChecked = true;
+                ToggleDeleteTask.IsChecked = true;
+                ChunkNumberBox.Value = 16;
+                writeSettings();
+            }
+            else
+            {
+                readSettings();
+            }
+
             DirectoryInfo directoryInfo = new DirectoryInfo(appFolder);
             FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos("*.qtask");
             foreach (FileSystemInfo fileSystemInfo in fileSystemInfos)
@@ -48,6 +61,8 @@ namespace quantum.Views
                             taskInfo.Url = strTaskInfo[0];
                             taskInfo.Dir = strTaskInfo[1];
                             QuantumDownload quantumDownload = new QuantumDownload();
+                            quantumDownload.shouldDeleteTaak = (bool)ToggleDeleteTask.IsChecked;
+                            quantumDownload.shouldOpenFileFolder = (bool)ToggleOpenFileFolder.IsChecked;
                             quantumDownload.taskInfo = taskInfo;
                             quantumDownload.taskInfo.TaskFile = fileSystemInfo.FullName;
                             quantumDownload.Init();
@@ -155,6 +170,8 @@ namespace quantum.Views
         {
             public TaskInfo taskInfo { get; set; }
             public bool isDownloading = false;
+            public bool shouldDeleteTaak = false;
+            public bool shouldOpenFileFolder = false;
 
             public void Init()
             {
@@ -207,8 +224,14 @@ namespace quantum.Views
                 {
                     if (taskInfo.Percentage >= 100)
                     {
-                        File.Delete(taskInfo.TaskFile);
-                        Process.Start("explorer.exe", taskInfo.Dir);
+                        if (shouldDeleteTaak)
+                        {
+                            File.Delete(taskInfo.TaskFile);
+                        }
+                        if (shouldOpenFileFolder)
+                        {
+                            Process.Start("explorer.exe", taskInfo.Dir);
+                        }
                         App.notifyIcon.ShowBalloonTip("quantum", "Download Complete!", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
                     }
                 }
@@ -380,6 +403,25 @@ namespace quantum.Views
             }
         }
 
+        public void readSettings()
+        {
+            string settingsPath = Path.Join(appFolder, "settings");
+            string[] values = File.ReadAllLines(settingsPath);
+            ToggleOpenFileFolder.IsChecked = values[0] == "true";
+            ToggleDeleteTask.IsChecked = values[1] == "true";
+            ChunkNumberBox.Value = Convert.ToInt32(values[2]);
+        }
+
+        public void writeSettings()
+        {
+            string settingsPath = Path.Join(appFolder, "settings");
+            List<string> values = new List<string>();
+            values.Add((bool)ToggleOpenFileFolder.IsChecked ? "true" : "false");
+            values.Add((bool)ToggleDeleteTask.IsChecked ? "true" : "false");
+            values.Add(ChunkNumberBox.Value.ToString());
+            File.WriteAllLines(settingsPath, values);
+        }
+
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             AddTaskLink.Text = "";
@@ -424,6 +466,11 @@ namespace quantum.Views
             }
         }
 
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsDialog.Show();
+        }
+
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             currentDeletingIndex =
@@ -466,8 +513,10 @@ namespace quantum.Views
                 }
 
                 taskInfo.Dir = AddTaskDir.Text;
-                taskInfo.ChunkCount = 16;
+                taskInfo.ChunkCount = (int)ChunkNumberBox.Value;
                 QuantumDownload quantumDownload = new QuantumDownload();
+                quantumDownload.shouldDeleteTaak = (bool)ToggleDeleteTask.IsChecked;
+                quantumDownload.shouldOpenFileFolder = (bool)ToggleOpenFileFolder.IsChecked;
                 quantumDownload.taskInfo = taskInfo;
                 quantumDownload.startDownload();
                 quantumDownload.taskInfo.TaskFile = Path.Join(appFolder, Guid.NewGuid().ToString() + ".qtask");
@@ -480,6 +529,18 @@ namespace quantum.Views
         private void AddTaskCancel(object sender, RoutedEventArgs e)
         {
             AddTaskDialog.Hide();
+        }
+
+        private void SettingsConfirm(object sender, RoutedEventArgs e)
+        {
+            writeSettings();
+            SettingsDialog.Hide();
+        }
+
+        private void SettingsCancel(object sender, RoutedEventArgs e)
+        {
+            readSettings();
+            SettingsDialog.Hide();
         }
 
         private void ConfirmDelete(object sender, RoutedEventArgs e)
