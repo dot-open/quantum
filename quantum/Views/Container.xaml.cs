@@ -223,23 +223,17 @@ namespace quantum.Views
             private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
             {
                 isDownloading = false;
-                try
+                if (taskInfo.Percentage >= 100)
                 {
-                    if (taskInfo.Percentage >= 100)
+                    if (shouldDeleteTaak)
                     {
-                        if (shouldDeleteTaak)
-                        {
-                            File.Delete(taskInfo.TaskFile);
-                        }
-                        if (shouldOpenFileFolder)
-                        {
-                            Process.Start("explorer.exe", taskInfo.Dir);
-                        }
-                        App.notifyIcon.ShowBalloonTip("quantum", "Download Complete!", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+                        File.Delete(taskInfo.TaskFile);
                     }
-                }
-                catch
-                {
+                    if (shouldOpenFileFolder)
+                    {
+                        Process.Start("explorer.exe", taskInfo.Dir);
+                    }
+                    App.notifyIcon.ShowBalloonTip("quantum", "Download Complete!", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
                 }
             }
 
@@ -436,7 +430,7 @@ namespace quantum.Views
             FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos("*.dll");
             foreach (FileSystemInfo fileSystemInfo in fileSystemInfos)
             {
-                if (fileSystemInfo is FileInfo)
+                if (fileSystemInfo is FileInfo && fileSystemInfo.Name.StartsWith("plugin"))
                 {
                     pluginsList.Add(fileSystemInfo.FullName);
                 }
