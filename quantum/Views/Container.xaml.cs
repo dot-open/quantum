@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
@@ -39,6 +40,7 @@ namespace quantum.Views
                 ToggleOpenFileFolder.IsChecked = true;
                 ToggleDeleteTask.IsChecked = true;
                 ChunkNumberBox.Value = 16;
+                TogglePlugins.IsChecked = false;
                 writeSettings();
             }
             else
@@ -145,6 +147,7 @@ namespace quantum.Views
             public string TaskFile { get; set; }
             public string Dir { get; set; }
             public int ChunkCount { get; set; }
+            public string UserAgent { get; set; }
             public DownloadService Download { get; set; }
         }
 
@@ -191,10 +194,10 @@ namespace quantum.Views
                 {
                     ChunkCount = taskInfo.ChunkCount,
                     ParallelDownload = true,
-                    /*RequestConfiguration = 
+                    RequestConfiguration = 
                     {
-                        UserAgent = taskInfo.UA
-                    }*/
+                        UserAgent = taskInfo.UserAgent
+                    }
                 };
                 taskInfo.Download = new DownloadService(downloadOpt);
                 taskInfo.Download.DownloadStarted += OnDownloadStarted;
@@ -282,7 +285,7 @@ namespace quantum.Views
                               (DownloadList.Children.Count <= 1 ? " Task" : " Tasks");
         }
 
-        public void addList(String fileName)
+        public void addList(string fileName)
         {
             ProgressBar progressBar = new ProgressBar();
 
@@ -410,6 +413,8 @@ namespace quantum.Views
             ToggleOpenFileFolder.IsChecked = values[0] == "true";
             ToggleDeleteTask.IsChecked = values[1] == "true";
             ChunkNumberBox.Value = Convert.ToInt32(values[2]);
+            UserAgentBox.Text = values[3];
+            TogglePlugins.IsChecked = values[4] == "true";
         }
 
         public void writeSettings()
@@ -419,7 +424,42 @@ namespace quantum.Views
             values.Add((bool)ToggleOpenFileFolder.IsChecked ? "true" : "false");
             values.Add((bool)ToggleDeleteTask.IsChecked ? "true" : "false");
             values.Add(ChunkNumberBox.Value.ToString());
+            values.Add(UserAgentBox.Text);
+            values.Add((bool)TogglePlugins.IsChecked ? "true" : "false");
             File.WriteAllLines(settingsPath, values);
+        }
+
+        public List<string> getPluginsList()
+        {
+            List<string> pluginsList = new List<string>();
+            DirectoryInfo directoryInfo = new DirectoryInfo(Path.Join(appFolder, "plugins"));
+            FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos("*.dll");
+            foreach (FileSystemInfo fileSystemInfo in fileSystemInfos)
+            {
+                if (fileSystemInfo is FileInfo)
+                {
+                    pluginsList.Add(fileSystemInfo.FullName);
+                }
+            }
+            return pluginsList;
+        }
+
+        public bool shouldPluginConvertUrl(string pluginPath, string Url)
+        {
+            Assembly assembly = Assembly.LoadFrom(pluginPath);
+            Type type = assembly.GetType("QuantumPlugin.Main");
+            object obj = Activator.CreateInstance(type);
+            MethodInfo shouldConvertUrl = type.GetMethod("shouldConvertUrl");
+            return (bool)shouldConvertUrl.Invoke(obj, new object[] {Url});
+        }
+
+        public string pluginConvertUrl(string pluginPath, string Url)
+        {
+            Assembly assembly = Assembly.LoadFrom(pluginPath);
+            Type type = assembly.GetType("QuantumPlugin.Main");
+            object obj = Activator.CreateInstance(type);
+            MethodInfo convertUrl = type.GetMethod("convertUrl");
+            return (string)convertUrl.Invoke(obj, new object[] { Url });
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -511,6 +551,17 @@ namespace quantum.Views
                 {
                     taskInfo.Url = "http://" + AddTaskLink.Text;
                 }
+                if ((bool)TogglePlugins.IsChecked)
+                {
+                    foreach (string pluginPath in getPluginsList())
+                    {
+                        if (shouldPluginConvertUrl(pluginPath, taskInfo.Url))
+                        {
+                            taskInfo.Url = pluginConvertUrl(pluginPath, taskInfo.Url);
+                        }
+                    }
+                }
+                taskInfo.UserAgent = UserAgentBox.Text;
 
                 taskInfo.Dir = AddTaskDir.Text;
                 taskInfo.ChunkCount = (int)ChunkNumberBox.Value;

@@ -129,6 +129,17 @@
                         <TextBlock Grid.Column="0" VerticalAlignment="Center">Chunk Count: </TextBlock>
                         <ui:NumberBox Grid.Column="1" x:Name="ChunkNumberBox" PlaceholderText="1-32" Max="32" Min="1" IntegersOnly="True" Margin="6,0,0,0" />
                     </Grid>
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center">User Agent:</TextBlock>
+                        <ui:TextBox Grid.Column="1" x:Name="UserAgentBox" Margin="6,0,0,0" />
+                    </Grid>
+                    <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="Plugins" />
+                    <ui:ToggleSwitch Margin="0,14,0,0" x:Name="TogglePlugins">Enable Plugins</ui:ToggleSwitch>
+                    <TextBlock Margin="0,14,0,0" Text="Please ensure that all plugins are from trusted source!" />
                 </StackPanel>
             </Grid>
         </ui:Dialog>
