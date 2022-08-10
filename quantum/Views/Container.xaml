@@ -140,7 +140,27 @@
                     <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="Plugins" />
                     <ui:ToggleSwitch Margin="0,14,0,0" x:Name="TogglePlugins">Enable Plugins</ui:ToggleSwitch>
                     <TextBlock Margin="0,14,0,0" Text="Please ensure that all plugins are from trusted source!" />
+                    <ui:Button Margin="0,14,0,0" Icon="Open24" Click="OpenPluginsMan_Click" >Open Plugins Manager</ui:Button>
                 </StackPanel>
+            </Grid>
+        </ui:Dialog>
+
+        <ui:Dialog
+            DialogHeight="500"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            x:Name="PluginsManagerDialog"
+            IsShown="False"
+            ButtonLeftVisibility="Hidden"
+            ButtonRightName="OK"
+            ButtonRightAppearance="Primary"
+            ButtonRightClick="PluginsManOK">
+            <Grid>
+                <StackPanel>
+                    <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="Plugins Manager" />
+                    <ui:Button Icon="Add24" Margin="0,14,0,0" >Add Plugin</ui:Button>
+                </StackPanel>
+                <ListBox x:Name="PluginsListBox" Margin="0,90,0,0" />
             </Grid>
         </ui:Dialog>
 

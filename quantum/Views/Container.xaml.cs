@@ -80,6 +80,16 @@ namespace quantum.Views
                 }
             }
 
+            List<string> pluginsList = getPluginsList(true, true);
+            foreach (string pluginPath in pluginsList)
+            {
+                if (File.Exists(pluginPath + ".shouldDelete"))
+                {
+                    File.Delete(pluginPath);
+                    File.Delete(pluginPath + ".shouldDelete");
+                }
+            }
+
             new Thread(() =>
             {
                 for (;;)
@@ -314,7 +324,7 @@ namespace quantum.Views
             Wpf.Ui.Controls.Button buttonDelete = new Wpf.Ui.Controls.Button();
             buttonDelete.Content = "Delete";
             buttonDelete.Click += ButtonDelete_Click;
-            buttonPause.Margin = new Thickness(5, 0, 0, 0);
+            buttonDelete.Margin = new Thickness(5, 0, 0, 0);
             grid.Children.Add(buttonDelete);
             buttonDelete.SetValue(Grid.ColumnProperty, 2);
 
@@ -423,19 +433,73 @@ namespace quantum.Views
             File.WriteAllLines(settingsPath, values);
         }
 
-        public List<string> getPluginsList()
+        public List<string> getPluginsList(bool includeDisabled = false, bool getFullName = true)
         {
             List<string> pluginsList = new List<string>();
             DirectoryInfo directoryInfo = new DirectoryInfo(Path.Join(appFolder, "plugins"));
             FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos("*.dll");
             foreach (FileSystemInfo fileSystemInfo in fileSystemInfos)
             {
-                if (fileSystemInfo is FileInfo && fileSystemInfo.Name.StartsWith("plugin"))
+                if (fileSystemInfo is FileInfo && fileSystemInfo.Name.StartsWith("plugin") && !File.Exists(fileSystemInfo.FullName + ".disabled"))
                 {
-                    pluginsList.Add(fileSystemInfo.FullName);
+                    if (!File.Exists(fileSystemInfo.FullName + ".shouldDelete") || getFullName)
+                    {
+                        pluginsList.Add(getFullName ? fileSystemInfo.FullName : fileSystemInfo.Name);
+                    }
+                }
+                if (fileSystemInfo is FileInfo && File.Exists(fileSystemInfo.FullName + ".disabled") && includeDisabled)
+                {
+                    if (!File.Exists(fileSystemInfo.FullName + ".shouldDelete") || getFullName)
+                    {
+                        pluginsList.Add(getFullName ? fileSystemInfo.FullName : fileSystemInfo.Name);
+                    }
                 }
             }
             return pluginsList;
+        }
+
+        public void refreshPluginsList()
+        {
+            List<string> pluginsList = getPluginsList(true, false);
+            List<UIElement> uiElements = new List<UIElement>();
+            foreach (string pluginPath in pluginsList)
+            {
+                ColumnDefinition fullColumnDef = new ColumnDefinition();
+                fullColumnDef.Width = new GridLength(1, GridUnitType.Star);
+                ColumnDefinition autoColumnDef1 = new ColumnDefinition();
+                autoColumnDef1.Width = GridLength.Auto;
+                ColumnDefinition autoColumnDef2 = new ColumnDefinition();
+                autoColumnDef2.Width = GridLength.Auto;
+                Grid grid = new Grid();
+                grid.ColumnDefinitions.Add(fullColumnDef);
+                grid.ColumnDefinitions.Add(autoColumnDef1);
+                grid.ColumnDefinitions.Add(autoColumnDef2);
+
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = pluginPath;
+                textBlock.FontSize = 13;
+                textBlock.FontWeight = FontWeights.Medium;
+                textBlock.VerticalAlignment = VerticalAlignment.Center;
+                grid.Children.Add(textBlock);
+                textBlock.SetValue(Grid.ColumnProperty, 0);
+
+                Wpf.Ui.Controls.Button buttonEnable = new Wpf.Ui.Controls.Button();
+                buttonEnable.Content = File.Exists(Path.Join(Path.Join(appFolder, "plugins"), pluginPath) + ".disabled") ? "Enable" : "Disable";
+                buttonEnable.Click += ButtonEnable_Click;
+                buttonEnable.Margin = new Thickness(5, 0, 0, 0);
+                grid.Children.Add(buttonEnable);
+                buttonEnable.SetValue(Grid.ColumnProperty, 1);
+
+                Wpf.Ui.Controls.Button buttonDelete = new Wpf.Ui.Controls.Button();
+                buttonDelete.Content = "Delete";
+                buttonDelete.Click += ButtonDeletePlugin_Click;
+                buttonDelete.Margin = new Thickness(5, 0, 0, 0);
+                grid.Children.Add(buttonDelete);
+                buttonDelete.SetValue(Grid.ColumnProperty, 2);
+
+                uiElements.Add(grid);
+            }
+            PluginsListBox.ItemsSource = uiElements;
         }
 
         public bool shouldPluginConvertUrl(string pluginPath, string Url)
@@ -444,7 +508,7 @@ namespace quantum.Views
             Type type = assembly.GetType("QuantumPlugin.Main");
             object obj = Activator.CreateInstance(type);
             MethodInfo shouldConvertUrl = type.GetMethod("shouldConvertUrl");
-            return (bool)shouldConvertUrl.Invoke(obj, new object[] {Url});
+            return (bool)shouldConvertUrl.Invoke(obj, new object[] { Url });
         }
 
         public string pluginConvertUrl(string pluginPath, string Url)
@@ -530,6 +594,28 @@ namespace quantum.Views
             }
         }
 
+        private void ButtonDeletePlugin_Click(object sender, RoutedEventArgs e)
+        {
+            string pluginPath = Path.Join(Path.Join(appFolder, "plugins"), ((TextBlock)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Children[0]).Text);
+            File.Create(pluginPath + ".shouldDelete").Close();
+            refreshPluginsList();
+        }
+
+        private void ButtonEnable_Click(object sender, RoutedEventArgs e)
+        {
+            string pluginPath = Path.Join(Path.Join(appFolder, "plugins"), ((TextBlock)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Children[0]).Text);
+            if (File.Exists(pluginPath + ".disabled"))
+            {
+                File.Delete(pluginPath + ".disabled");
+                ((Wpf.Ui.Controls.Button)sender).Content = "Disable";
+            }
+            else
+            {
+                File.Create(pluginPath + ".disabled").Close();
+                ((Wpf.Ui.Controls.Button)sender).Content = "Enable";
+            }
+        }
+
         private void AddTaskAdd(object sender, RoutedEventArgs e)
         {
             if (AddTaskLink.Text != "")
@@ -586,6 +672,17 @@ namespace quantum.Views
         {
             readSettings();
             SettingsDialog.Hide();
+        }
+
+        private void OpenPluginsMan_Click(object sender, RoutedEventArgs e)
+        {
+            refreshPluginsList();
+            PluginsManagerDialog.Show();
+        }
+
+        private void PluginsManOK(object sender, RoutedEventArgs e)
+        {
+            PluginsManagerDialog.Hide();
         }
 
         private void ConfirmDelete(object sender, RoutedEventArgs e)
