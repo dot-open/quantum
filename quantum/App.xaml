@@ -8,7 +8,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:Resources Theme="Light" />
+                <ui:ThemesDictionary Theme="Light" />
+                <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
             <ContextMenu x:Key="SysTrayMenu">
                 <MenuItem Header="Show Window" Click="ShowWindow_Click"/>
