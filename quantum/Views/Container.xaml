@@ -83,14 +83,13 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="AddTaskDialog"
-            IsShown="False"
             ButtonLeftName="Add"
             ButtonLeftClick="AddTaskAdd"
             ButtonRightName="Cancel"
             ButtonRightClick="AddTaskCancel">
             <Grid>
                 <StackPanel>
-                    <TextBlock FontWeight="Medium" Text="Add a task" />
+                    <TextBlock FontWeight="Bold" Text="Add a task" />
                     <Grid Margin="0,14,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -109,7 +108,6 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="SettingsDialog"
-            IsShown="False"
             ButtonLeftName="Confirm"
             ButtonLeftClick="SettingsConfirm"
             ButtonRightName="Cancel"
@@ -117,10 +115,10 @@
             <Grid>
                 <StackPanel>
                     <TextBlock FontWeight="Bold" Text="Settings" />
-                    <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="When Task Completed" />
+                    <TextBlock Margin="0,14,0,0" Text="When Task Completed" />
                     <ui:ToggleSwitch Margin="0,14,0,0" x:Name="ToggleOpenFileFolder">Open file folder</ui:ToggleSwitch>
                     <ui:ToggleSwitch Margin="0,14,0,0" x:Name="ToggleDeleteTask">Delete task</ui:ToggleSwitch>
-                    <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="Download Settings" />
+                    <TextBlock Margin="0,14,0,0" Text="Download Settings" />
                     <Grid Margin="0,14,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -137,7 +135,7 @@
                         <TextBlock Grid.Column="0" VerticalAlignment="Center">User Agent:</TextBlock>
                         <ui:TextBox Grid.Column="1" x:Name="UserAgentBox" Margin="6,0,0,0" />
                     </Grid>
-                    <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="Plugins" />
+                    <TextBlock Margin="0,14,0,0" Text="Plugins" />
                     <ui:ToggleSwitch Margin="0,14,0,0" x:Name="TogglePlugins">Enable Plugins</ui:ToggleSwitch>
                     <TextBlock Margin="0,14,0,0" Text="Please ensure that all plugins are from trusted source!" />
                     <ui:Button Margin="0,14,0,0" Icon="Open24" Click="OpenPluginsMan_Click" >Open Plugins Manager</ui:Button>
@@ -150,7 +148,6 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="PluginsManagerDialog"
-            IsShown="False"
             ButtonLeftName="Open Plugins Folder"
             ButtonLeftAppearance="Light"
             ButtonLeftClick="OpenPluginsFolder_Click"
@@ -159,7 +156,7 @@
             ButtonRightClick="PluginsManOK">
             <Grid>
                 <StackPanel>
-                    <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="Plugins Manager" />
+                    <TextBlock Margin="0,14,0,0" FontWeight="Bold" Text="Plugins Manager" />
                     <ui:Button Icon="Add24" Margin="0,14,0,0" Click="AddPlugin_Click" >Add Plugin</ui:Button>
                 </StackPanel>
                 <ListBox x:Name="PluginsListBox" Margin="0,90,0,0" />
@@ -171,14 +168,13 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="ConfirmDeleteDialog"
-            IsShown="False"
             ButtonLeftName="Delete"
             ButtonLeftClick="ConfirmDelete"
             ButtonRightName="Cancel"
             ButtonRightClick="CancelDelete">
             <Grid>
                 <StackPanel>
-                    <TextBlock FontWeight="Medium" Text="Are you sure to delete this task?" />
+                    <TextBlock Text="Are you sure to delete this task?" />
                 </StackPanel>
             </Grid>
         </ui:Dialog>
