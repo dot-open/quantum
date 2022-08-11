@@ -1,8 +1,11 @@
 # Quantum
-Just a simple multithread downloader.
 
-Used NuGet Packages: [WPF-UI](https://www.nuget.org/packages/WPF-UI) [Downloader](https://www.nuget.org/packages/Downloader)
+Just a simple multithreading downloader.
 
-Basic Features: Adding, deleting, pausing, resuming and saving download tasks, customizing thread count and user agent.
+~~With the support of plugins, this can also be a Baidu Netdisk downloader.~~
+
+## Features
+
+Adding, deleting, pausing, resuming and saving download tasks, customizing thread count and user agent.
 
 More Features can be brought to quantum by installing plugins.

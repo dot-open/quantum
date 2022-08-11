@@ -11,7 +11,7 @@
              WindowBackdropType="Mica"
              WindowCornerPreference="Round"
              WindowStartupLocation="CenterScreen"
-             Title="MainWindow" Height="600" MinHeight="600" Width="450" MinWidth="450" Closing="UiWindow_Closing">
+             Title="Quantum" Height="600" MinHeight="600" Width="450" MinWidth="450" Closing="UiWindow_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
