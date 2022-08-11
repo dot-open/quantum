@@ -1,4 +1,5 @@
 ﻿using Downloader;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,6 +33,11 @@ namespace quantum.Views
             if (!Directory.Exists(appFolder))
             {
                 Directory.CreateDirectory(appFolder);
+            }
+
+            if (!Directory.Exists(Path.Join(appFolder, "plugins")))
+            {
+                Directory.CreateDirectory(Path.Join(appFolder, "plugins"));
             }
 
             if (!File.Exists(Path.Join(appFolder, "settings")))
@@ -87,6 +93,10 @@ namespace quantum.Views
                 {
                     File.Delete(pluginPath);
                     File.Delete(pluginPath + ".shouldDelete");
+                    if (File.Exists(pluginPath + ".disabled"))
+                    {
+                        File.Delete(pluginPath + ".disabled");
+                    }
                 }
             }
 
@@ -683,6 +693,34 @@ namespace quantum.Views
         private void PluginsManOK(object sender, RoutedEventArgs e)
         {
             PluginsManagerDialog.Hide();
+        }
+
+        private void AddPlugin_Click(object sender, RoutedEventArgs e)
+        {
+            string fileName = "";
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Plugin File(*.dll)|*.dll";
+            ofd.ValidateNames = true;
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            if ((bool)ofd.ShowDialog())
+            {
+                fileName = ofd.FileName;
+                if (Path.GetFileName(fileName).StartsWith("plugin"))
+                {
+                    File.Copy(fileName, Path.Join(Path.Join(appFolder, "plugins"), Path.GetFileName(fileName)));
+                }
+                else
+                {
+                    File.Copy(fileName, Path.Join(Path.Join(appFolder, "plugins"), "plugin" + Path.GetFileName(fileName)));
+                }
+                refreshPluginsList();
+            }
+        }
+
+        private void OpenPluginsFolder_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer.exe", Path.Join(appFolder, "plugins"));
         }
 
         private void ConfirmDelete(object sender, RoutedEventArgs e)

@@ -151,14 +151,16 @@
             Grid.RowSpan="2"
             x:Name="PluginsManagerDialog"
             IsShown="False"
-            ButtonLeftVisibility="Hidden"
+            ButtonLeftName="Open Plugins Folder"
+            ButtonLeftAppearance="Light"
+            ButtonLeftClick="OpenPluginsFolder_Click"
             ButtonRightName="OK"
             ButtonRightAppearance="Primary"
             ButtonRightClick="PluginsManOK">
             <Grid>
                 <StackPanel>
                     <TextBlock FontWeight="Medium" Margin="0,14,0,0" Text="Plugins Manager" />
-                    <ui:Button Icon="Add24" Margin="0,14,0,0" >Add Plugin</ui:Button>
+                    <ui:Button Icon="Add24" Margin="0,14,0,0" Click="AddPlugin_Click" >Add Plugin</ui:Button>
                 </StackPanel>
                 <ListBox x:Name="PluginsListBox" Margin="0,90,0,0" />
             </Grid>
