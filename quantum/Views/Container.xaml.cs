@@ -55,8 +55,8 @@ namespace quantum.Views
             }
 
             DirectoryInfo directoryInfo = new DirectoryInfo(appFolder);
-            FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos("*.qtask");
-            foreach (FileSystemInfo fileSystemInfo in fileSystemInfos)
+            FileSystemInfo[] fileSystemInfoList = directoryInfo.GetFileSystemInfos("*.qtask");
+            foreach (FileSystemInfo fileSystemInfo in fileSystemInfoList)
             {
                 if (fileSystemInfo is FileInfo)
                 {
@@ -74,7 +74,14 @@ namespace quantum.Views
                             quantumDownload.taskInfo = taskInfo;
                             quantumDownload.taskInfo.TaskFile = fileSystemInfo.FullName;
                             quantumDownload.Init();
-                            resumeTask(quantumDownload);
+                            if (File.Exists(fileSystemInfo.FullName + ".qdl"))
+                            {
+                                resumeTask(quantumDownload);
+                            }
+                            else
+                            {
+                                quantumDownload.startDownload();
+                            }
                             quantumDownload.isDownloading = true;
                             downloadTasks.Add(quantumDownload);
                             addList(taskInfo.Url);
@@ -532,7 +539,8 @@ namespace quantum.Views
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            AddTaskLink.Text = "";
+            string clipboardText = Clipboard.GetText(TextDataFormat.Text);
+            AddTaskLink.Text = clipboardText.StartsWith("http://") || clipboardText.StartsWith("https://") ? clipboardText : "";
             AddTaskDialog.Show();
         }
 
@@ -577,6 +585,20 @@ namespace quantum.Views
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             SettingsDialog.Show();
+        }
+
+        private void ChangeTheme_Click(object sender, RoutedEventArgs e)
+        {
+            if (((Wpf.Ui.Controls.MenuItem)sender).SymbolIcon == Wpf.Ui.Common.SymbolRegular.WeatherSunny24)
+            {
+                ((Wpf.Ui.Controls.MenuItem)sender).SymbolIcon = Wpf.Ui.Common.SymbolRegular.WeatherMoon24;
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+            }
+            else
+            {
+                ((Wpf.Ui.Controls.MenuItem)sender).SymbolIcon = Wpf.Ui.Common.SymbolRegular.WeatherSunny24;
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+            }
         }
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
