@@ -42,7 +42,6 @@
                         <ui:MenuItem Header="Pause All" SymbolIcon="Pause24" Click="PauseAll_Click" />
                         <Separator />
                         <ui:MenuItem Header="Settings" SymbolIcon="Settings24" Click="Settings_Click" />
-                        <ui:MenuItem SymbolIcon="WeatherSunny24" Click="ChangeTheme_Click" />
                     </Menu>
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="DownloadList">
@@ -140,6 +139,18 @@
                     <ui:ToggleSwitch Margin="0,14,0,0" x:Name="TogglePlugins">Enable Plugins</ui:ToggleSwitch>
                     <TextBlock Margin="0,14,0,0" Text="Please ensure that all plugins are from trusted source" />
                     <ui:Button Margin="0,14,0,0" Icon="Open24" Click="OpenPluginsMan_Click" >Open Plugins Manager</ui:Button>
+                    <TextBlock Margin="0,14,0,0" Text="Appearance" />
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center">Color Theme:</TextBlock>
+                        <ComboBox x:Name="ThemeComboBox" IsEditable="False" SelectedIndex="0" Grid.Column="1" Margin="6,0,0,0">
+                            <ComboBoxItem>Light</ComboBoxItem>
+                            <ComboBoxItem>Dark</ComboBoxItem>
+                        </ComboBox>
+                    </Grid>
                 </StackPanel>
             </Grid>
         </ui:Dialog>

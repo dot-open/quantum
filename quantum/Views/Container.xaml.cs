@@ -157,6 +157,15 @@ namespace quantum.Views
                     Thread.Sleep(50);
                 }
             }).Start();
+
+            if (ThemeComboBox.SelectedIndex == 0)
+            {
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+            }
+            else
+            {
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+            }
         }
 
         public List<QuantumDownload> downloadTasks = new List<QuantumDownload>();
@@ -442,6 +451,7 @@ namespace quantum.Views
             ChunkNumberBox.Value = Convert.ToInt32(values[2]);
             UserAgentBox.Text = values[3];
             TogglePlugins.IsChecked = values[4] == "true";
+            ThemeComboBox.SelectedIndex = Convert.ToInt32(values[5]);
         }
 
         public void writeSettings()
@@ -453,6 +463,7 @@ namespace quantum.Views
             values.Add(ChunkNumberBox.Value.ToString());
             values.Add(UserAgentBox.Text);
             values.Add((bool)TogglePlugins.IsChecked ? "true" : "false");
+            values.Add(ThemeComboBox.SelectedIndex.ToString());
             File.WriteAllLines(settingsPath, values);
         }
 
@@ -593,20 +604,6 @@ namespace quantum.Views
             SettingsDialog.Show();
         }
 
-        private void ChangeTheme_Click(object sender, RoutedEventArgs e)
-        {
-            if (((Wpf.Ui.Controls.MenuItem)sender).SymbolIcon == Wpf.Ui.Common.SymbolRegular.WeatherSunny24)
-            {
-                ((Wpf.Ui.Controls.MenuItem)sender).SymbolIcon = Wpf.Ui.Common.SymbolRegular.WeatherMoon24;
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
-            }
-            else
-            {
-                ((Wpf.Ui.Controls.MenuItem)sender).SymbolIcon = Wpf.Ui.Common.SymbolRegular.WeatherSunny24;
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
-            }
-        }
-
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             currentDeletingIndex =
@@ -704,6 +701,14 @@ namespace quantum.Views
         {
             writeSettings();
             SettingsDialog.Hide();
+            if (ThemeComboBox.SelectedIndex == 0)
+            {
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+            }
+            else
+            {
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+            }
         }
 
         private void SettingsCancel(object sender, RoutedEventArgs e)
