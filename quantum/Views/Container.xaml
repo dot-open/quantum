@@ -44,7 +44,7 @@
                         <ui:MenuItem Header="Settings" SymbolIcon="Settings24" Click="Settings_Click" />
                         <ui:MenuItem SymbolIcon="WeatherSunny24" Click="ChangeTheme_Click" />
                     </Menu>
-                    <ScrollViewer Grid.Row="1">
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="DownloadList">
                         </StackPanel>
                     </ScrollViewer>

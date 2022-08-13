@@ -403,12 +403,18 @@ namespace quantum.Views
 
         public void resumeTask(QuantumDownload downloadTask)
         {
-            IFormatter formatter = new BinaryFormatter();
-            Stream serializedStream =
-                new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
-            DownloadPackage package = formatter.Deserialize(serializedStream) as DownloadPackage;
-            downloadTask.Resume(package);
-            serializedStream.Close();
+            try
+            {
+                IFormatter formatter = new BinaryFormatter();
+                Stream serializedStream =
+                    new FileStream(downloadTask.taskInfo.TaskFile + ".qdl", FileMode.OpenOrCreate);
+                DownloadPackage package = formatter.Deserialize(serializedStream) as DownloadPackage;
+                downloadTask.Resume(package);
+                serializedStream.Close();
+            }
+            catch
+            {
+            }
         }
 
         public void saveAllTasks()
