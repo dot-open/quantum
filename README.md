@@ -1,6 +1,8 @@
 # Quantum
 
-Just a simple multithreading downloader.
+Just a simple multithreading downloader， still in develop.
+
+Releases will be ready when it's stable.
 
 ~~With the support of plugins, this can also be a Baidu Netdisk downloader.~~
 

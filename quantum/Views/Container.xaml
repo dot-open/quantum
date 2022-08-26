@@ -146,7 +146,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center">Color Theme:</TextBlock>
-                        <ComboBox x:Name="ThemeComboBox" IsEditable="False" SelectedIndex="0" Grid.Column="1" Margin="6,0,0,0">
+                        <ComboBox x:Name="ThemeComboBox" IsEditable="False" SelectedIndex="0" Grid.Column="1" Margin="6,0,0,0" SelectionChanged="onThemeChange">
                             <ComboBoxItem>Light</ComboBoxItem>
                             <ComboBoxItem>Dark</ComboBoxItem>
                         </ComboBox>

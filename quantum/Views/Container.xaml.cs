@@ -701,14 +701,6 @@ namespace quantum.Views
         {
             writeSettings();
             SettingsDialog.Hide();
-            if (ThemeComboBox.SelectedIndex == 0)
-            {
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
-            }
-            else
-            {
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
-            }
         }
 
         private void SettingsCancel(object sender, RoutedEventArgs e)
@@ -778,6 +770,18 @@ namespace quantum.Views
             else
             {
                 Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void onThemeChange(object sender, SelectionChangedEventArgs e)
+        {
+            if (ThemeComboBox.SelectedIndex == 0)
+            {
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+            }
+            else
+            {
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
             }
         }
     }
