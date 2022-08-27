@@ -1,6 +1,6 @@
 # Quantum
 
-Just a simple multithreading downloader， still in develop.
+Just a simple multithreading downloader, still in develop.
 
 Releases will be ready when it's stable.
 

@@ -82,6 +82,7 @@ namespace quantum.Views
                             {
                                 quantumDownload.startDownload();
                             }
+
                             quantumDownload.isDownloading = true;
                             downloadTasks.Add(quantumDownload);
                             addList(taskInfo.Url);
@@ -153,18 +154,21 @@ namespace quantum.Views
                             TotalProgress.Value = totalProgress;
                         }
                     });
-                    Application.Current.Dispatcher.Invoke(() => App.notifyIcon.ToolTipText = "quantum\nTotal Progress " + TotalProgress.Value.ToString() + "%");
+                    Application.Current.Dispatcher.Invoke(() =>
+                        App.notifyIcon.ToolTipText = "quantum\nTotal Progress " + TotalProgress.Value.ToString() + "%");
                     Thread.Sleep(50);
                 }
             }).Start();
 
             if (ThemeComboBox.SelectedIndex == 0)
             {
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica,
+                    true);
             }
             else
             {
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica,
+                    true);
             }
         }
 
@@ -230,7 +234,7 @@ namespace quantum.Views
                 {
                     ChunkCount = taskInfo.ChunkCount,
                     ParallelDownload = true,
-                    RequestConfiguration = 
+                    RequestConfiguration =
                     {
                         UserAgent = taskInfo.UserAgent
                     }
@@ -265,11 +269,14 @@ namespace quantum.Views
                     {
                         File.Delete(taskInfo.TaskFile);
                     }
+
                     if (shouldOpenFileFolder)
                     {
                         Process.Start("explorer.exe", taskInfo.Dir);
                     }
-                    App.notifyIcon.ShowBalloonTip("quantum", "Download Complete!", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+
+                    App.notifyIcon.ShowBalloonTip("quantum", "Download Complete!",
+                        Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
                 }
             }
 
@@ -474,13 +481,15 @@ namespace quantum.Views
             FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos("*.dll");
             foreach (FileSystemInfo fileSystemInfo in fileSystemInfos)
             {
-                if (fileSystemInfo is FileInfo && fileSystemInfo.Name.StartsWith("plugin") && !File.Exists(fileSystemInfo.FullName + ".disabled"))
+                if (fileSystemInfo is FileInfo && fileSystemInfo.Name.StartsWith("plugin") &&
+                    !File.Exists(fileSystemInfo.FullName + ".disabled"))
                 {
                     if (!File.Exists(fileSystemInfo.FullName + ".shouldDelete") || getFullName)
                     {
                         pluginsList.Add(getFullName ? fileSystemInfo.FullName : fileSystemInfo.Name);
                     }
                 }
+
                 if (fileSystemInfo is FileInfo && File.Exists(fileSystemInfo.FullName + ".disabled") && includeDisabled)
                 {
                     if (!File.Exists(fileSystemInfo.FullName + ".shouldDelete") || getFullName)
@@ -489,6 +498,7 @@ namespace quantum.Views
                     }
                 }
             }
+
             return pluginsList;
         }
 
@@ -518,7 +528,9 @@ namespace quantum.Views
                 textBlock.SetValue(Grid.ColumnProperty, 0);
 
                 Wpf.Ui.Controls.Button buttonEnable = new Wpf.Ui.Controls.Button();
-                buttonEnable.Content = File.Exists(Path.Join(Path.Join(appFolder, "plugins"), pluginPath) + ".disabled") ? "Enable" : "Disable";
+                buttonEnable.Content = File.Exists(Path.Join(Path.Join(appFolder, "plugins"), pluginPath) + ".disabled")
+                    ? "Enable"
+                    : "Disable";
                 buttonEnable.Click += ButtonEnable_Click;
                 buttonEnable.Margin = new Thickness(5, 0, 0, 0);
                 grid.Children.Add(buttonEnable);
@@ -533,6 +545,7 @@ namespace quantum.Views
 
                 uiElements.Add(grid);
             }
+
             PluginsListBox.ItemsSource = uiElements;
         }
 
@@ -557,7 +570,9 @@ namespace quantum.Views
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             string clipboardText = Clipboard.GetText(TextDataFormat.Text);
-            AddTaskLink.Text = clipboardText.StartsWith("http://") || clipboardText.StartsWith("https://") ? clipboardText : "";
+            AddTaskLink.Text = clipboardText.StartsWith("http://") || clipboardText.StartsWith("https://")
+                ? clipboardText
+                : "";
             AddTaskDialog.Show();
         }
 
@@ -631,14 +646,16 @@ namespace quantum.Views
 
         private void ButtonDeletePlugin_Click(object sender, RoutedEventArgs e)
         {
-            string pluginPath = Path.Join(Path.Join(appFolder, "plugins"), ((TextBlock)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Children[0]).Text);
+            string pluginPath = Path.Join(Path.Join(appFolder, "plugins"),
+                ((TextBlock)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Children[0]).Text);
             File.Create(pluginPath + ".shouldDelete").Close();
             refreshPluginsList();
         }
 
         private void ButtonEnable_Click(object sender, RoutedEventArgs e)
         {
-            string pluginPath = Path.Join(Path.Join(appFolder, "plugins"), ((TextBlock)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Children[0]).Text);
+            string pluginPath = Path.Join(Path.Join(appFolder, "plugins"),
+                ((TextBlock)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Children[0]).Text);
             if (File.Exists(pluginPath + ".disabled"))
             {
                 File.Delete(pluginPath + ".disabled");
@@ -666,6 +683,7 @@ namespace quantum.Views
                 {
                     taskInfo.Url = "http://" + AddTaskLink.Text;
                 }
+
                 if ((bool)TogglePlugins.IsChecked)
                 {
                     foreach (string pluginPath in getPluginsList())
@@ -676,6 +694,7 @@ namespace quantum.Views
                         }
                     }
                 }
+
                 taskInfo.UserAgent = UserAgentBox.Text;
 
                 taskInfo.Dir = AddTaskDir.Text;
@@ -737,8 +756,10 @@ namespace quantum.Views
                 }
                 else
                 {
-                    File.Copy(fileName, Path.Join(Path.Join(appFolder, "plugins"), "plugin" + Path.GetFileName(fileName)));
+                    File.Copy(fileName,
+                        Path.Join(Path.Join(appFolder, "plugins"), "plugin" + Path.GetFileName(fileName)));
                 }
+
                 refreshPluginsList();
             }
         }
@@ -777,11 +798,17 @@ namespace quantum.Views
         {
             if (ThemeComboBox.SelectedIndex == 0)
             {
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light, Wpf.Ui.Appearance.BackgroundType.Mica,
+                    true);
+            }
+            else if (ThemeComboBox.SelectedIndex == 1)
+            {
+                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica,
+                    true);
             }
             else
             {
-                Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica, true);
+                Wpf.Ui.Appearance.Watcher.Watch(this, Wpf.Ui.Appearance.BackgroundType.Mica, true);
             }
         }
     }
