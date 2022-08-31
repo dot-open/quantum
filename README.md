@@ -1,3 +1,5 @@
+![repo-banner](./repo-banner.png)
+
 # Quantum
 
 Just a simple multithreading downloader, still in develop.
