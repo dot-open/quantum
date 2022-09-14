@@ -6,13 +6,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Compile Update="Views\DownloadViewer.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\DownloadViewer.xaml">
+    <Page Update="Resources\Language\EN.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Container.xaml">

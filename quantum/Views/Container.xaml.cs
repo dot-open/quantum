@@ -15,6 +15,17 @@ using Wpf.Ui.Controls;
 
 namespace quantum.Views
 {
+    public class LanguageManager
+    {
+        public static List<string> GetAllLang = new List<string>{"English.xaml", "中文.xaml"};
+        public static int CurrentLang = 0;
+        public static void UseLang(string langFile)
+        {
+            ResourceDictionary ResDict = new ResourceDictionary();
+            ResDict.Source = new Uri(@"Resources\Language\" + langFile, UriKind.Relative);
+            Application.Current.Resources.MergedDictionaries[2] = ResDict;
+        }
+    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -26,6 +37,10 @@ namespace quantum.Views
         public Container()
         {
             InitializeComponent();
+            for (int k = 0; k < LanguageManager.GetAllLang.Count; k++)
+            {
+                LanguageComboBox.Items.Add(LanguageManager.GetAllLang[k]);
+            }
             refreshList();
             AddTaskDir.Items.Add(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
             AddTaskDir.Items.Add(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
@@ -810,6 +825,11 @@ namespace quantum.Views
             {
                 Wpf.Ui.Appearance.Watcher.Watch(this, Wpf.Ui.Appearance.BackgroundType.Mica, true);
             }
+        }
+
+        private void OnLanguageChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LanguageManager.UseLang(LanguageManager.GetAllLang[LanguageComboBox.SelectedIndex]);
         }
     }
 }

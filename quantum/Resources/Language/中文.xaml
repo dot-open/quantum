@@ -1,0 +1,31 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="Language">语言</s:String>
+    <s:String x:Key="Add">添加</s:String>
+    <s:String x:Key="StartAll">开始所有</s:String>
+    <s:String x:Key="PauseAll">暂停所有</s:String>
+    <s:String x:Key="Settings">设置</s:String>
+    <s:String x:Key="Cancel">取消</s:String>
+    <s:String x:Key="Confirm">确定</s:String>
+    <s:String x:Key="HttpLink">HTTP链接</s:String>
+    <s:String x:Key="WhenTaskCompleted">当任务完成</s:String>
+    <s:String x:Key="OpenFileFolder">打开存储文件夹</s:String>
+    <s:String x:Key="DeleteTask">删除任务</s:String>
+    <s:String x:Key="Download">下载</s:String>
+    <s:String x:Key="ChunkCount">线程数: </s:String>
+    <s:String x:Key="UserAgent">User Agent: </s:String>
+    <s:String x:Key="Plugins">插件</s:String>
+    <s:String x:Key="PluginSourceTip">请确保所有插件均来自受信任的来源。</s:String>
+    <s:String x:Key="Enable">启用</s:String>
+    <s:String x:Key="PluginMan">插件管理器</s:String>
+    <s:String x:Key="Appearance">外观</s:String>
+    <s:String x:Key="ColorTheme">主题: </s:String>
+    <s:String x:Key="Light">浅色</s:String>
+    <s:String x:Key="Dark">深色</s:String>
+    <s:String x:Key="FollowSystem">跟随系统</s:String>
+    <s:String x:Key="OpenPluginsFolder">打开插件文件夹</s:String>
+    <s:String x:Key="AddPlugin">添加插件</s:String>
+    <s:String x:Key="Delete">删除</s:String>
+    <s:String x:Key="DeleteTaskNote">确定要删除这个任务吗？</s:String>
+</ResourceDictionary>

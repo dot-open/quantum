@@ -1,0 +1,31 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="Language">Language</s:String>
+    <s:String x:Key="Add">Add</s:String>
+    <s:String x:Key="StartAll">Start All</s:String>
+    <s:String x:Key="PauseAll">Pause All</s:String>
+    <s:String x:Key="Settings">Settings</s:String>
+    <s:String x:Key="Cancel">Cancel</s:String>
+    <s:String x:Key="Confirm">Confirm</s:String>
+    <s:String x:Key="HttpLink">HTTP URL</s:String>
+    <s:String x:Key="WhenTaskCompleted">When Task Completed</s:String>
+    <s:String x:Key="OpenFileFolder">Open File Folder</s:String>
+    <s:String x:Key="DeleteTask">Delete Task</s:String>
+    <s:String x:Key="Download">Download</s:String>
+    <s:String x:Key="ChunkCount">Chunk Count: </s:String>
+    <s:String x:Key="UserAgent">User Agent: </s:String>
+    <s:String x:Key="Plugins">Plugins</s:String>
+    <s:String x:Key="PluginSourceTip">Please ensure that all plugins are from trusted source.</s:String>
+    <s:String x:Key="Enable">Enable</s:String>
+    <s:String x:Key="PluginMan">Plugin Manager</s:String>
+    <s:String x:Key="Appearance">Appearance</s:String>
+    <s:String x:Key="ColorTheme">Color Theme: </s:String>
+    <s:String x:Key="Light">Light</s:String>
+    <s:String x:Key="Dark">Dark</s:String>
+    <s:String x:Key="FollowSystem">Follow System</s:String>
+    <s:String x:Key="OpenPluginsFolder">Open Plugins Folder</s:String>
+    <s:String x:Key="AddPlugin">Add Plugin</s:String>
+    <s:String x:Key="Delete">Delete</s:String>
+    <s:String x:Key="DeleteTaskNote">Are you sure to delete this task?</s:String>
+</ResourceDictionary>

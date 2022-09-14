@@ -10,6 +10,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
+                <ResourceDictionary Source="/Resources/Language/English.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <ContextMenu x:Key="SysTrayMenu">
                 <MenuItem Header="Show Window" Click="ShowWindow_Click"/>

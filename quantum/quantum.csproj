@@ -19,4 +19,10 @@
         <PackageReference Include="WPF-UI" Version="2.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Page Update="Resources\Language\中文.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+    </ItemGroup>
+
 </Project>

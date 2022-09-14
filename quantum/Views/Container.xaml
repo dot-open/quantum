@@ -36,12 +36,12 @@
                     </Grid.RowDefinitions>
 
                     <Menu Grid.Row="0">
-                        <ui:MenuItem Header="Add" SymbolIcon="Add24" Click="Add_Click" />
+                        <ui:MenuItem Header="{DynamicResource Add}" SymbolIcon="Add24" Click="Add_Click" />
                         <Separator />
-                        <ui:MenuItem Header="Start All" SymbolIcon="Play24" Click="StartAll_Click" />
-                        <ui:MenuItem Header="Pause All" SymbolIcon="Pause24" Click="PauseAll_Click" />
+                        <ui:MenuItem Header="{DynamicResource StartAll}" SymbolIcon="Play24" Click="StartAll_Click" />
+                        <ui:MenuItem Header="{DynamicResource PauseAll}" SymbolIcon="Pause24" Click="PauseAll_Click" />
                         <Separator />
-                        <ui:MenuItem Header="Settings" SymbolIcon="Settings24" Click="Settings_Click" />
+                        <ui:MenuItem Header="{DynamicResource Settings}" SymbolIcon="Settings24" Click="Settings_Click" />
                     </Menu>
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="DownloadList">
@@ -83,20 +83,20 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="AddTaskDialog"
-            ButtonLeftName="Add"
+            ButtonLeftName="{DynamicResource Add}"
             ButtonLeftClick="AddTaskAdd"
-            ButtonRightName="Cancel"
+            ButtonRightName="{DynamicResource Cancel}"
             ButtonRightClick="AddTaskCancel">
             <Grid>
                 <StackPanel>
-                    <TextBlock FontWeight="Bold" Text="Add a task" />
+                    <TextBlock FontWeight="Bold" Text="{DynamicResource Add}" />
                     <Grid Margin="0,14,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center">http://</TextBlock>
-                        <ui:TextBox Grid.Column="1" x:Name="AddTaskLink" PlaceholderText="http link" Margin="6,0,0,0" />
+                        <ui:TextBox Grid.Column="1" x:Name="AddTaskLink" PlaceholderText="{DynamicResource HttpLink}" Margin="6,0,0,0" />
                     </Grid>
                     <ComboBox x:Name="AddTaskDir" IsEditable="True" Grid.Column="1" Margin="0,14,0,0"></ComboBox>
                 </StackPanel>
@@ -108,23 +108,25 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="SettingsDialog"
-            ButtonLeftName="Confirm"
+            ButtonLeftName="{DynamicResource Confirm}"
             ButtonLeftClick="SettingsConfirm"
-            ButtonRightName="Cancel"
+            ButtonRightName="{DynamicResource Cancel}"
             ButtonRightClick="SettingsCancel">
             <Grid>
                 <StackPanel>
-                    <TextBlock FontWeight="Bold" Text="Settings" />
-                    <TextBlock Margin="0,14,0,0" Text="When Task Completed" />
-                    <ui:ToggleSwitch Margin="0,14,0,0" x:Name="ToggleOpenFileFolder">Open file folder</ui:ToggleSwitch>
-                    <ui:ToggleSwitch Margin="0,14,0,0" x:Name="ToggleDeleteTask">Delete task</ui:ToggleSwitch>
-                    <TextBlock Margin="0,14,0,0" Text="Download Settings" />
+                    <TextBlock FontWeight="Bold" Text="{DynamicResource Settings}" />
+                    <TextBlock Margin="0,22,0,0" Text="{DynamicResource Language}" />
+                    <ComboBox x:Name="LanguageComboBox" IsEditable="False" SelectedIndex="0" Margin="0,14,0,0" SelectionChanged="OnLanguageChanged"></ComboBox>
+                    <TextBlock Margin="0,14,0,0" Text="{DynamicResource WhenTaskCompleted}" />
+                    <ui:ToggleSwitch Margin="0,14,0,0" x:Name="ToggleOpenFileFolder" Content="{DynamicResource OpenFileFolder}"/>
+                    <ui:ToggleSwitch Margin="0,14,0,0" x:Name="ToggleDeleteTask" Content="{DynamicResource DeleteTask}"/>
+                    <TextBlock Margin="0,22,0,0" Text="{DynamicResource Download}" />
                     <Grid Margin="0,14,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center">Chunk Count: </TextBlock>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource ChunkCount}"></TextBlock>
                         <ui:NumberBox Grid.Column="1" x:Name="ChunkNumberBox" PlaceholderText="1-32" Max="32" Min="1" IntegersOnly="True" Margin="6,0,0,0" />
                     </Grid>
                     <Grid Margin="0,14,0,0">
@@ -132,24 +134,24 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center">User Agent:</TextBlock>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource UserAgent}"/>
                         <ui:TextBox Grid.Column="1" x:Name="UserAgentBox" Margin="6,0,0,0" />
                     </Grid>
-                    <TextBlock Margin="0,14,0,0" Text="Plugins" />
-                    <ui:ToggleSwitch Margin="0,14,0,0" x:Name="TogglePlugins">Enable Plugins</ui:ToggleSwitch>
-                    <TextBlock Margin="0,14,0,0" Text="Please ensure that all plugins are from trusted source" />
-                    <ui:Button Margin="0,14,0,0" Icon="Open24" Click="OpenPluginsMan_Click" >Open Plugins Manager</ui:Button>
-                    <TextBlock Margin="0,14,0,0" Text="Appearance" />
+                    <TextBlock Margin="0,22,0,0" Text="{DynamicResource Plugins}" />
+                    <ui:ToggleSwitch Margin="0,14,0,0" x:Name="TogglePlugins" Content="{DynamicResource Enable}"></ui:ToggleSwitch>
+                    <TextBlock Margin="0,14,0,0" Text="{DynamicResource PluginSourceTip}" />
+                    <ui:Button Margin="0,14,0,0" Icon="Open24" Click="OpenPluginsMan_Click" Content="{DynamicResource PluginMan}"/>
+                    <TextBlock Margin="0,22,0,0" Text="{DynamicResource Appearance}" />
                     <Grid Margin="0,14,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center">Color Theme:</TextBlock>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource ColorTheme}"/>
                         <ComboBox x:Name="ThemeComboBox" IsEditable="False" SelectedIndex="0" Grid.Column="1" Margin="6,0,0,0" SelectionChanged="onThemeChange">
-                            <ComboBoxItem>Light</ComboBoxItem>
-                            <ComboBoxItem>Dark</ComboBoxItem>
-                            <ComboBoxItem>Follow System</ComboBoxItem>
+                            <ComboBoxItem Content="{DynamicResource Light}"/>
+                            <ComboBoxItem Content="{DynamicResource Dark}"/>
+                            <ComboBoxItem Content="{DynamicResource FollowSystem}"/>
                         </ComboBox>
                     </Grid>
                 </StackPanel>
@@ -161,16 +163,16 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="PluginsManagerDialog"
-            ButtonLeftName="Open Plugins Folder"
+            ButtonLeftName="{DynamicResource OpenPluginsFolder}"
             ButtonLeftAppearance="Secondary"
             ButtonLeftClick="OpenPluginsFolder_Click"
-            ButtonRightName="OK"
+            ButtonRightName="{DynamicResource Confirm}"
             ButtonRightAppearance="Primary"
             ButtonRightClick="PluginsManOK">
             <Grid>
                 <StackPanel>
-                    <TextBlock Margin="0,14,0,0" FontWeight="Bold" Text="Plugins Manager" />
-                    <ui:Button Icon="Add24" Margin="0,14,0,0" Click="AddPlugin_Click" >Add Plugin</ui:Button>
+                    <TextBlock Margin="0,14,0,0" FontWeight="Bold" Text="{DynamicResource PluginMan}" />
+                    <ui:Button Icon="Add24" Margin="0,14,0,0" Click="AddPlugin_Click" Content="{DynamicResource AddPlugin}" />
                 </StackPanel>
                 <ListBox x:Name="PluginsListBox" Margin="0,90,0,0" />
             </Grid>
@@ -181,13 +183,13 @@
             Grid.Row="1"
             Grid.RowSpan="2"
             x:Name="ConfirmDeleteDialog"
-            ButtonLeftName="Delete"
+            ButtonLeftName="{DynamicResource Delete}"
             ButtonLeftClick="ConfirmDelete"
-            ButtonRightName="Cancel"
+            ButtonRightName="{DynamicResource Cancel}"
             ButtonRightClick="CancelDelete">
             <Grid>
                 <StackPanel>
-                    <TextBlock Text="Are you sure to delete this task?" />
+                    <TextBlock Text="{DynamicResource DeleteTaskNote}" />
                 </StackPanel>
             </Grid>
         </ui:Dialog>
