@@ -23,6 +23,9 @@
       <Page Update="Resources\Language\中文.xaml">
         <SubType>Designer</SubType>
       </Page>
+      <Page Update="Window.xaml">
+        <SubType>Designer</SubType>
+      </Page>
     </ItemGroup>
 
 </Project>
