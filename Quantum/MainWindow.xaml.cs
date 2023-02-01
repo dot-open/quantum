@@ -13,21 +13,35 @@ using System.Windows;
 using System.Windows.Controls;
 using Quantum;
 using Wpf.Ui.Controls;
+using System.Linq;
 
 namespace Quantum
 {
     public class LanguageManager
     {
-        public static List<string> GetAllLang = new List<string>{"English.xaml", "中文.xaml"};
-        public static int CurrentLang = 0;
+        private static readonly string _languageDirectory = @"..\..\..\Resources\Language\";
+        public static List<string> LangFiles { get; } = new List<string>(GetLangFiles());
+        private static int _currentLangIndex = 0;
+        public static string CurrentLangFile
+        {
+            get { return LangFiles[_currentLangIndex]; }
+            set
+            {
+                _currentLangIndex = LangFiles.IndexOf(value);
+                UseLang(CurrentLangFile);
+            }
+        }
+        public static List<string> GetLangFiles()
+        {
+            return Directory.GetFiles(_languageDirectory, "*.xaml").Select(Path.GetFileName).ToList();
+        }
         public static void UseLang(string langFile)
         {
-            ResourceDictionary ResDict = new ResourceDictionary();
-            ResDict.Source = new Uri(@"Resources\Language\" + langFile, UriKind.Relative);
-            Application.Current.Resources.MergedDictionaries[2] = ResDict;
+            ResourceDictionary resDict = new ResourceDictionary();
+            resDict.Source = new Uri($"{_languageDirectory}{langFile}", UriKind.Relative);
+            Application.Current.Resources.MergedDictionaries[2] = resDict;
         }
     }
-    
     public partial class MainWindow : UiWindow
     {
         public string appFolder =
@@ -36,9 +50,9 @@ namespace Quantum
         public MainWindow()
         {
             InitializeComponent();
-            for (int k = 0; k < LanguageManager.GetAllLang.Count; k++)
+            for (int k = 0; k < LanguageManager.LangFiles.Count; k++)
             {
-                LanguageComboBox.Items.Add(LanguageManager.GetAllLang[k]);
+                LanguageComboBox.Items.Add(LanguageManager.LangFiles[k]);
             }
             refreshList();
             AddTaskDir.Items.Add(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
@@ -828,7 +842,7 @@ namespace Quantum
 
         private void OnLanguageChanged(object sender, SelectionChangedEventArgs e)
         {
-            LanguageManager.UseLang(LanguageManager.GetAllLang[LanguageComboBox.SelectedIndex]);
+            LanguageManager.UseLang(LanguageManager.LangFiles[LanguageComboBox.SelectedIndex]);
         }
     }
 }
