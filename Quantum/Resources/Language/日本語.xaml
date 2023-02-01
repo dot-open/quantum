@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="Language">言語</s:String>
+    <s:String x:Key="Add">追加</s:String>
+    <s:String x:Key="StartAll">すべて開始</s:String>
+    <s:String x:Key="PauseAll">すべて一時停止</s:String>
+    <s:String x:Key="Settings">設定</s:String>
+    <s:String x:Key="Cancel">キャンセル</s:String>
+    <s:String x:Key="Confirm">確認</s:String>
+    <s:String x:Key="HttpLink">HTTPリンク</s:String>
+    <s:String x:Key="WhenTaskCompleted">タスク完了時</s:String>
+    <s:String x:Key="OpenFileFolder">ファイルを開く</s:String>
+    <s:String x:Key="DeleteTask">タスクを削除</s:String>
+    <s:String x:Key="Download">ダウンロード</s:String>
+    <s:String x:Key="ChunkCount">分割数</s:String>
+    <s:String x:Key="UserAgent">UA</s:String>
+    <s:String x:Key="Plugins">プラグイン</s:String>
+    <s:String x:Key="PluginSourceTip">プラグインのソースが信頼できるものであることを確認してください</s:String>
+    <s:String x:Key="Enable">有効</s:String>
+    <s:String x:Key="PluginMan">プラグイン管理</s:String>
+    <s:String x:Key="Appearance">外観</s:String>
+    <s:String x:Key="ColorTheme">色テーマ</s:String>
+    <s:String x:Key="Light">ライト</s:String>
+    <s:String x:Key="Dark">ダーク</s:String>
+    <s:String x:Key="FollowSystem">システムに従う</s:String>
+    <s:String x:Key="OpenPluginsFolder">プラグインフォルダを開く</s:String>
+    <s:String x:Key="AddPlugin">プラグインを追加</s:String>
+    <s:String x:Key="Delete">削除</s:String>
+    <s:String x:Key="DeleteTaskNote">タスクを削除しますか？</s:String>
+</ResourceDictionary>
