@@ -11,9 +11,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Quantum;
 using Wpf.Ui.Controls;
 
-namespace quantum.Views
+namespace Quantum
 {
     public class LanguageManager
     {
@@ -26,15 +27,13 @@ namespace quantum.Views
             Application.Current.Resources.MergedDictionaries[2] = ResDict;
         }
     }
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class Container : UiWindow
+    
+    public partial class MainWindow : UiWindow
     {
         public string appFolder =
             Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "quantum");
 
-        public Container()
+        public MainWindow()
         {
             InitializeComponent();
             for (int k = 0; k < LanguageManager.GetAllLang.Count; k++)

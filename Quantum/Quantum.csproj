@@ -7,6 +7,7 @@
         <UseWPF>true</UseWPF>
         <ApplicationIcon>app.ico</ApplicationIcon>
         <IsPublishable>False</IsPublishable>
+        <RootNamespace>quantum</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,6 +22,9 @@
 
     <ItemGroup>
       <Page Update="Resources\Language\中文.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="MainWindow.xaml">
         <SubType>Designer</SubType>
       </Page>
     </ItemGroup>

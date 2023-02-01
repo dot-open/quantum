@@ -2,7 +2,7 @@
 using System;
 using System.Windows;
 
-namespace quantum
+namespace Quantum
 {
     /// <summary>
     /// Interaction logic for App.xaml
