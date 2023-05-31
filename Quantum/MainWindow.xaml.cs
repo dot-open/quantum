@@ -9,10 +9,14 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Quantum;
+using Quantum.Core.Data;
+using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
+using Clipboard = System.Windows.Clipboard;
 
 namespace Quantum
 {
@@ -33,6 +37,7 @@ namespace Quantum
         public string appFolder =
             Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "quantum");
 
+        public List<Core.Download.QuantumDownload> Tasks = new List<Core.Download.QuantumDownload>();
         public MainWindow()
         {
             InitializeComponent();
@@ -40,11 +45,11 @@ namespace Quantum
             {
                 LanguageComboBox.Items.Add(LanguageManager.GetAllLang[k]);
             }
-            refreshList();
+            
             AddTaskDir.Items.Add(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
             AddTaskDir.Items.Add(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
             //Wpf.Ui.Appearance.Background.Apply(this, Wpf.Ui.Appearance.BackgroundType.Mica);
-            if (!Directory.Exists(appFolder))
+            /*if (!Directory.Exists(appFolder))
             {
                 Directory.CreateDirectory(appFolder);
             }
@@ -66,9 +71,38 @@ namespace Quantum
             else
             {
                 readSettings();
-            }
+            }*/
+            
+            LoadConfigToUi();
 
-            DirectoryInfo directoryInfo = new DirectoryInfo(appFolder);
+            TaskListBox.ItemsSource = Tasks;
+
+            new Thread(() =>
+            {
+                for (;;)
+                {
+                    try
+                    {
+                        double totalProg = 0;
+                        if(Tasks.Count > 0)
+                        {
+                            foreach (var dl in Tasks)
+                            {
+                                totalProg += dl.Percentage;
+                            }
+                            totalProg /= Tasks.Count;
+                        }
+                        Dispatcher.Invoke(new Action(delegate
+                        {
+                            TaskListBox.Items.Refresh();
+                            TotalProgress.Value = totalProg;
+                        }));
+                    }catch(Exception){}
+                    Thread.Sleep(500);
+                }
+            }).Start();
+
+            /*DirectoryInfo directoryInfo = new DirectoryInfo(appFolder);
             FileSystemInfo[] fileSystemInfoList = directoryInfo.GetFileSystemInfos("*.qtask");
             foreach (FileSystemInfo fileSystemInfo in fileSystemInfoList)
             {
@@ -106,7 +140,7 @@ namespace Quantum
                         }
                     }
                 }
-            }
+            }*/
 
             List<string> pluginsList = getPluginsList(true, true);
             foreach (string pluginPath in pluginsList)
@@ -122,7 +156,7 @@ namespace Quantum
                 }
             }
 
-            new Thread(() =>
+            /*new Thread(() =>
             {
                 for (;;)
                 {
@@ -135,7 +169,7 @@ namespace Quantum
                             int downloadIndex = 0;
                             Application.Current.Dispatcher.Invoke(() =>
                                 downloadIndex = downloadTasks.IndexOf(downloadTask));
-                            UIElement element = DownloadList.Children[downloadIndex];
+                            UIElement element = TaskStackPanel.Children[downloadIndex];
                             if (element is CardExpander)
                             {
                                 TextBlock textBlock = new TextBlock();
@@ -151,7 +185,7 @@ namespace Quantum
                             }
                         }
 
-                        foreach (var download in DownloadList.Children)
+                        foreach (var download in TaskStackPanel.Children)
                         {
                             if (download is CardExpander)
                             {
@@ -162,9 +196,9 @@ namespace Quantum
                             }
                         }
 
-                        if (DownloadList.Children.Count > 0)
+                        if (TaskStackPanel.Children.Count > 0)
                         {
-                            totalProgress /= DownloadList.Children.Count;
+                            totalProgress /= TaskStackPanel.Children.Count;
                             TotalProgress.Value = totalProgress;
                         }
                     });
@@ -183,7 +217,7 @@ namespace Quantum
             {
                 Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark, Wpf.Ui.Appearance.BackgroundType.Mica,
                     true);
-            }
+            }*/
         }
 
         public List<QuantumDownload> downloadTasks = new List<QuantumDownload>();
@@ -205,23 +239,7 @@ namespace Quantum
             public DownloadService Download { get; set; }
         }
 
-        public static string CalcMemoryMensurableUnit(double bytes)
-        {
-            double kb = bytes / 1024;
-            double mb = kb / 1024;
-            double gb = mb / 1024;
-            double tb = gb / 1024;
-
-            string result =
-                tb > 1 ? $"{tb:0.##}TB" :
-                gb > 1 ? $"{gb:0.##}GB" :
-                mb > 1 ? $"{mb:0.##}MB" :
-                kb > 1 ? $"{kb:0.##}KB" :
-                $"{bytes:0.##}B";
-
-            result = result.Replace("/", ".");
-            return result;
-        }
+        
 
         public class QuantumDownload
         {
@@ -313,9 +331,9 @@ namespace Quantum
                     timeLeftUnit = "unknown";
                 }
 
-                string speed = CalcMemoryMensurableUnit(e.BytesPerSecondSpeed);
-                string bytesReceived = CalcMemoryMensurableUnit(e.ReceivedBytesSize);
-                string totalBytesToReceive = CalcMemoryMensurableUnit(e.TotalBytesToReceive);
+                string speed = "u";
+                string bytesReceived = "u5";
+                string totalBytesToReceive = "vwo50";
                 taskInfo.Percentage = e.ProgressPercentage;
                 taskInfo.Speed = $"{speed}/s";
                 taskInfo.TimeLeft = $"{estimateTime} {timeLeftUnit} left";
@@ -328,12 +346,6 @@ namespace Quantum
                 taskInfo.File = e.FileName;
                 isDownloading = true;
             }
-        }
-
-        public void refreshList()
-        {
-            TotalCount.Text = "Total " + DownloadList.Children.Count +
-                              (DownloadList.Children.Count <= 1 ? " Task" : " Tasks");
         }
 
         public void addList(string fileName)
@@ -399,8 +411,8 @@ namespace Quantum
                 cardExpander.Icon = Wpf.Ui.Common.SymbolRegular.ArrowDownload20;
             }
 
-            DownloadList.Children.Add(cardExpander);
-            refreshList();
+            TaskStackPanel.Children.Add(cardExpander);
+            
         }
 
         public void deleteTask(int index)
@@ -408,8 +420,8 @@ namespace Quantum
             downloadTasks[index].Stop();
             File.Delete(downloadTasks[index].taskInfo.TaskFile);
             downloadTasks.RemoveAt(index);
-            DownloadList.Children.RemoveAt(index);
-            refreshList();
+            TaskStackPanel.Children.RemoveAt(index);
+            
         }
 
         public void saveTask(QuantumDownload downloadTask)
@@ -475,7 +487,23 @@ namespace Quantum
             ThemeComboBox.SelectedIndex = Convert.ToInt32(values[5]);
         }
 
-        public void writeSettings()
+        public void LoadConfigToUi()
+        {
+            Data.ReadConfig();
+            ChunkNumberBox.Value = Data.CurrentQuantumConfig.Chunks;
+            UserAgentBox.Text = Data.CurrentQuantumConfig.UserAgent;
+            ThemeComboBox.SelectedIndex = Data.CurrentQuantumConfig.Theme;
+        }
+        
+        public void SaveConfigFromUi()
+        {
+            Data.CurrentQuantumConfig.Chunks = Convert.ToInt32(ChunkNumberBox.Value);
+            Data.CurrentQuantumConfig.UserAgent = UserAgentBox.Text;
+            Data.CurrentQuantumConfig.Theme = ThemeComboBox.SelectedIndex;
+            Data.WriteConfig();
+        }
+
+        /*public void writeSettings()
         {
             string settingsPath = Path.Join(appFolder, "settings");
             List<string> values = new List<string>();
@@ -486,7 +514,7 @@ namespace Quantum
             values.Add((bool)TogglePlugins.IsChecked ? "true" : "false");
             values.Add(ThemeComboBox.SelectedIndex.ToString());
             File.WriteAllLines(settingsPath, values);
-        }
+        }*/
 
         public List<string> getPluginsList(bool includeDisabled = false, bool getFullName = true)
         {
@@ -581,8 +609,10 @@ namespace Quantum
             return (string)convertUrl.Invoke(obj, new object[] { Url });
         }
 
-        private void Add_Click(object sender, RoutedEventArgs e)
+        #region Menu Events
+        private void OnAddClick(object sender, RoutedEventArgs e)
         {
+            AddTaskLink.Text= string.Empty;
             string clipboardText = Clipboard.GetText(TextDataFormat.Text);
             AddTaskLink.Text = clipboardText.StartsWith("http://") || clipboardText.StartsWith("https://")
                 ? clipboardText
@@ -590,10 +620,10 @@ namespace Quantum
             AddTaskDialog.Show();
         }
 
-        private void PauseAll_Click(object sender, RoutedEventArgs e)
+        private void OnPauseAllClick(object sender, RoutedEventArgs e)
         {
             saveAllTasks();
-            foreach (var download in DownloadList.Children)
+            foreach (var download in TaskStackPanel.Children)
             {
                 if (download is CardExpander)
                 {
@@ -609,10 +639,10 @@ namespace Quantum
             }
         }
 
-        private void StartAll_Click(object sender, RoutedEventArgs e)
+        private void OnStartAllClick(object sender, RoutedEventArgs e)
         {
             resumeAllTasks();
-            foreach (var download in DownloadList.Children)
+            foreach (var download in TaskStackPanel.Children)
             {
                 if (download is CardExpander)
                 {
@@ -628,15 +658,44 @@ namespace Quantum
             }
         }
 
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        private void OnDeleteAllClick(object sender, RoutedEventArgs e)
+        {
+            for(int i = 0;i < Tasks.Count; i++)
+            {
+                if (Tasks[i].Status == Core.Download.QuantumDownloadStatus.Downloading)
+                {
+                    Tasks[i].Stop();
+                }
+            }
+            Tasks.Clear();
+        }
+
+        private void OnConfigClick(object sender, RoutedEventArgs e)
         {
             SettingsDialog.Show();
         }
+        #endregion
+
+        #region Utils
+        private Dialog CreateAskDialog(string title, string content)
+        {
+            Dialog dialog = new Dialog
+            {
+                Title= title,
+                Content= content,
+            };
+            Grid.SetRow(dialog, 1);
+            Grid.SetRowSpan(dialog, 3);
+            return dialog;
+        }
+        #endregion
+
+        #region Dialog Events
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             currentDeletingIndex =
-                DownloadList.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Parent);
+                TaskStackPanel.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent).Parent);
             ConfirmDeleteDialog.Show();
         }
 
@@ -644,7 +703,7 @@ namespace Quantum
         {
             QuantumDownload downloadTask =
                 downloadTasks[
-                    DownloadList.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent)
+                    TaskStackPanel.Children.IndexOf((CardExpander)((Grid)((Wpf.Ui.Controls.Button)sender).Parent)
                         .Parent)];
             if (downloadTask.isDownloading)
             {
@@ -686,19 +745,12 @@ namespace Quantum
         {
             if (AddTaskLink.Text != "")
             {
-                addList(AddTaskLink.Text);
+                //addList(AddTaskLink.Text);
                 AddTaskDialog.Hide();
-                TaskInfo taskInfo = new TaskInfo();
-                if (AddTaskLink.Text.StartsWith("https://") || AddTaskLink.Text.StartsWith("http://"))
-                {
-                    taskInfo.Url = AddTaskLink.Text;
-                }
-                else
-                {
-                    taskInfo.Url = "http://" + AddTaskLink.Text;
-                }
+                //TaskInfo taskInfo = new TaskInfo();
+                Core.Download.QuantumDownload task = new Core.Download.QuantumDownload(AddTaskLink.Text.StartsWith("https://") || AddTaskLink.Text.StartsWith("http://") ? AddTaskLink.Text : "http://" + AddTaskLink.Text, AddTaskDir.Text);
 
-                if ((bool)TogglePlugins.IsChecked)
+                /*if ((bool)TogglePlugins.IsChecked)
                 {
                     foreach (string pluginPath in getPluginsList())
                     {
@@ -707,23 +759,31 @@ namespace Quantum
                             taskInfo.Url = pluginConvertUrl(pluginPath, taskInfo.Url);
                         }
                     }
+                }*/
+
+                task.UserAgent = UserAgentBox.Text;
+                task.Chunks = Core.Data.Data.CurrentQuantumConfig.Chunks;
+                if (AddTaskLink.Text.EndsWith(".mp3") || AddTaskLink.Text.EndsWith(".mp4") || AddTaskLink.Text.EndsWith(".avi") || AddTaskLink.Text.EndsWith(".webm") || AddTaskLink.Text.EndsWith(".mov"))
+                {
+                    task.Symbol = SymbolRegular.WindowPlay20;
                 }
 
-                taskInfo.UserAgent = UserAgentBox.Text;
-
-                taskInfo.Dir = AddTaskDir.Text;
-                taskInfo.ChunkCount = (int)ChunkNumberBox.Value;
-                QuantumDownload quantumDownload = new QuantumDownload();
-                quantumDownload.shouldDeleteTaak = (bool)ToggleDeleteTask.IsChecked;
-                quantumDownload.shouldOpenFileFolder = (bool)ToggleOpenFileFolder.IsChecked;
-                quantumDownload.taskInfo = taskInfo;
-                quantumDownload.startDownload();
-                quantumDownload.taskInfo.TaskFile = Path.Join(appFolder, Guid.NewGuid().ToString() + ".qtask");
-                File.WriteAllLines(quantumDownload.taskInfo.TaskFile,
+                //taskInfo.ChunkCount = (int)ChunkNumberBox.Value;
+                //QuantumDownload quantumDownload = new QuantumDownload();
+                //quantumDownload.shouldDeleteTaak = (bool)ToggleDeleteTask.IsChecked;
+                //quantumDownload.shouldOpenFileFolder = (bool)ToggleOpenFileFolder.IsChecked;
+                //quantumDownload.taskInfo = taskInfo;
+                //quantumDownload.startDownload();
+                //quantumDownload.taskInfo.TaskFile = Path.Join(appFolder, Guid.NewGuid().ToString() + ".qtask");
+                /*File.WriteAllLines(quantumDownload.taskInfo.TaskFile,
                     new string[] { quantumDownload.taskInfo.Url, quantumDownload.taskInfo.Dir });
-                downloadTasks.Add(quantumDownload);
+                downloadTasks.Add(quantumDownload);*/
+                Tasks.Add(task);
+                Tasks[Tasks.Count - 1].Start();
             }
         }
+
+        #endregion
 
         private void AddTaskCancel(object sender, RoutedEventArgs e)
         {
@@ -732,13 +792,15 @@ namespace Quantum
 
         private void SettingsConfirm(object sender, RoutedEventArgs e)
         {
-            writeSettings();
+            //writeSettings();
+            SaveConfigFromUi();
             SettingsDialog.Hide();
         }
 
         private void SettingsCancel(object sender, RoutedEventArgs e)
         {
-            readSettings();
+            //readSettings();
+            LoadConfigToUi();
             SettingsDialog.Hide();
         }
 

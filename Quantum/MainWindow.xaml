@@ -1,8 +1,10 @@
 ﻿<ui:UiWindow x:Class="Quantum.MainWindow"
+             x:Name="QuantumMainWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ctrls="clr-namespace:Quantum.Controls"
              mc:Ignorable="d"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              Background="{ui:ThemeResource ApplicationBackgroundBrush}"
@@ -11,46 +13,126 @@
              WindowCornerPreference="Round"
              WindowStartupLocation="CenterScreen"
              Title="Quantum" Height="600" MinHeight="600" Width="450" MinWidth="450" Closing="UiWindow_Closing">
-    <Grid>
+    <Window.Resources>
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Border.CornerRadius" Value="6" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border
+                        x:Name="Border"
+                        Margin="0"
+                        Padding="0"
+                        HorizontalAlignment="Stretch"
+                        Height="Auto"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Border.CornerRadius}">
+                            <Grid>
+                                <ContentPresenter Margin="{TemplateBinding Padding}" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#10000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type ctrls:TaskItem}">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ctrls:TaskItem}">
+                        <Border HorizontalAlignment="Stretch">
+                            <StackPanel Margin="8">
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Grid.Column="0" FontSize="24" Symbol="{TemplateBinding TaskSymbol}" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="1"  Margin="4,0,4,0" VerticalAlignment="Center">
+                                        <TextBlock FontSize="14" Text="{TemplateBinding TaskName}" TextWrapping="NoWrap"/>
+                                        <TextBlock Text="{TemplateBinding Desc}" FontSize="12" Opacity="0.7" TextWrapping="NoWrap"/>
+                                    </StackPanel>
+                                    <ui:Button Grid.Column="2" Name="ContinueButton" Margin="4,0,4,0" Icon="Play24" FontSize="20" Padding="6"/>
+                                    <ui:Button Grid.Column="3" Name="PauseButton" Margin="4,0,4,0" Icon="Pause24" FontSize="20" Padding="6"/>
+                                    <ui:Button Grid.Column="4" Margin="4,0,0,0" Icon="Delete24" Appearance="Danger" FontSize="20" Padding="6" IconForeground="#ffffff"/>
+                                </Grid>
+                                <ProgressBar x:Name="StatusProgressBar" Grid.Column="1" Margin="0,4,0,0" VerticalAlignment="Center" Value="{TemplateBinding Percentage}"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Status" Value="Stopped">
+                                <Setter TargetName="ContinueButton" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="StatusProgressBar" Property="Background" Value="#FFE600"/>
+                                <Setter TargetName="StatusProgressBar" Property="Foreground" Value="#FFE600"/>
+                            </Trigger>
+                            <Trigger Property="Status" Value="Error">
+                                <Setter TargetName="PauseButton" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="StatusProgressBar" Property="Background" Value="#F44336"/>
+                                <Setter TargetName="StatusProgressBar" Property="Foreground" Value="#F44336"/>
+                            </Trigger>
+                            <Trigger Property="Status" Value="Downloading">
+                                <Setter TargetName="PauseButton" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="Status" Value="Completed">
+                                <Setter TargetName="ContinueButton" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="PauseButton" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="StatusProgressBar" Property="Background" Value="#00B512"/>
+                                <Setter TargetName="StatusProgressBar" Property="Foreground" Value="#00B512"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <ui:TitleBar
+            Title="{Binding ElementName=QuantumMainWindow, Path=Title}"
+            Grid.Row="0">
+        </ui:TitleBar>
+        <Menu Grid.Row="1">
+            <ui:MenuItem SymbolIcon="Add24" Click="OnAddClick" />
+            <Separator />
+            <ui:MenuItem Header="{DynamicResource StartAll}" SymbolIcon="Play24" Click="OnStartAllClick" />
+            <ui:MenuItem Header="{DynamicResource PauseAll}" SymbolIcon="Pause24" Click="OnPauseAllClick" />
+            <ui:MenuItem Header="{DynamicResource DeleteAll}" SymbolIcon="Delete24" Click="OnDeleteAllClick" />
+            <Separator />
+            <ui:MenuItem SymbolIcon="Settings24" Click="OnConfigClick" />
+        </Menu>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" Opacity="0">
+            <StackPanel x:Name="TaskStackPanel">
 
-        <Grid
-            x:Name="RootMainGrid"
-            Grid.Row="1"
-            Margin="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Border
-                Grid.Column="1">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Menu Grid.Row="0">
-                        <ui:MenuItem Header="{DynamicResource Add}" SymbolIcon="Add24" Click="Add_Click" />
-                        <Separator />
-                        <ui:MenuItem Header="{DynamicResource StartAll}" SymbolIcon="Play24" Click="StartAll_Click" />
-                        <ui:MenuItem Header="{DynamicResource PauseAll}" SymbolIcon="Pause24" Click="PauseAll_Click" />
-                        <Separator />
-                        <ui:MenuItem Header="{DynamicResource Settings}" SymbolIcon="Settings24" Click="Settings_Click" />
-                    </Menu>
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
-                        <StackPanel x:Name="DownloadList">
-                        </StackPanel>
-                    </ScrollViewer>
-                </Grid>
-            </Border>
-        </Grid>
-
-        <StatusBar x:Name="RootStatusBar" Grid.Row="2">
+            </StackPanel>
+        </ScrollViewer>
+        <ListBox x:Name="TaskListBox" Grid.Row="2" Focusable="False" BorderThickness="0,1,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <ctrls:TaskItem TaskName="{Binding Name}" TaskSymbol="{Binding Symbol}" Percentage="{Binding Percentage}" Status="{Binding Status}" Desc="{Binding Describe}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StatusBar x:Name="RootStatusBar" Grid.Row="3" BorderThickness="0,1,0,0">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -62,25 +144,20 @@
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
-
             <StatusBarItem Grid.Column="0">
-                <TextBlock x:Name="TotalCount" />
+                <TextBlock Text="{Binding ElementName=TaskListBox,Path=Items.Count,StringFormat=Total {0} Tasks}"/>
             </StatusBarItem>
             <Separator Grid.Column="1" />
             <StatusBarItem Grid.Column="2">
                 <ProgressBar x:Name="TotalProgress" Width="100" />
             </StatusBarItem>
         </StatusBar>
-        <ui:TitleBar
-            Title="Quantum"
-            Grid.Row="0">
-        </ui:TitleBar>
 
 
         <ui:Dialog
             DialogHeight="300"
             Grid.Row="1"
-            Grid.RowSpan="2"
+            Grid.RowSpan="3"
             x:Name="AddTaskDialog"
             ButtonLeftName="{DynamicResource Add}"
             ButtonLeftClick="AddTaskAdd"
@@ -97,7 +174,7 @@
                         <TextBlock Grid.Column="0" VerticalAlignment="Center">http://</TextBlock>
                         <ui:TextBox Grid.Column="1" x:Name="AddTaskLink" PlaceholderText="{DynamicResource HttpLink}" Margin="6,0,0,0" />
                     </Grid>
-                    <ComboBox x:Name="AddTaskDir" IsEditable="True" Grid.Column="1" Margin="0,14,0,0"></ComboBox>
+                    <ComboBox x:Name="AddTaskDir" IsEditable="True" SelectedIndex="0" Grid.Column="1" Margin="0,14,0,0"></ComboBox>
                 </StackPanel>
             </Grid>
         </ui:Dialog>
@@ -105,7 +182,7 @@
         <ui:Dialog
             DialogHeight="500"
             Grid.Row="1"
-            Grid.RowSpan="2"
+            Grid.RowSpan="3"
             x:Name="SettingsDialog"
             ButtonLeftName="{DynamicResource Confirm}"
             ButtonLeftClick="SettingsConfirm"

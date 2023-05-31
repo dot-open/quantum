@@ -5,6 +5,7 @@
     <s:String x:Key="Add">添加</s:String>
     <s:String x:Key="StartAll">开始所有</s:String>
     <s:String x:Key="PauseAll">暂停所有</s:String>
+    <s:String x:Key="DeleteAll">删除所有</s:String>
     <s:String x:Key="Settings">设置</s:String>
     <s:String x:Key="Cancel">取消</s:String>
     <s:String x:Key="Confirm">确定</s:String>
@@ -28,4 +29,6 @@
     <s:String x:Key="AddPlugin">添加插件</s:String>
     <s:String x:Key="Delete">删除</s:String>
     <s:String x:Key="DeleteTaskNote">确定要删除这个任务吗？</s:String>
+    <s:String x:Key="Total">共</s:String>
+    <s:String x:Key="Tasks">个任务</s:String>
 </ResourceDictionary>

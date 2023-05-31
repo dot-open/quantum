@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
                 <ResourceDictionary Source="/Resources/Language/English.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -15,7 +15,7 @@
                 <MenuItem Header="Show Window" Click="ShowWindow_Click"/>
                 <MenuItem Header="Exit" Click="Exit_Click"/>
             </ContextMenu>
-            <tb:TaskbarIcon x:Key="NotifyIcon" IconSource="\app.ico" ToolTipText="quantum" ContextMenu="{StaticResource SysTrayMenu}"/>
+            <tb:TaskbarIcon x:Key="NotifyIcon" IconSource="\app.ico" ToolTipText="Quantum" ContextMenu="{StaticResource SysTrayMenu}"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

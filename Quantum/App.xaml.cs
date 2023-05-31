@@ -25,12 +25,13 @@ namespace Quantum
 
         private void ShowWindow_Click(object sender, RoutedEventArgs e)
         {
-            Windows[0].Visibility = Visibility.Visible;
+            Windows[0].Show();
+            Windows[0].Focus();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            Windows[0].Visibility = Visibility.Hidden;
+            Windows[0].Hide();
             Windows[0].Close();
         }
     }
